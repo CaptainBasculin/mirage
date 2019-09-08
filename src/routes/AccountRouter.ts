@@ -25,7 +25,11 @@ AccountRouter.route('/').get((req, res) => {
     layout: 'layouts/account'
   })
 })
-
+AccountRouter.route('/secure_names').post(async (req, res) => {
+  req.user.longNames = !req.user.longNames
+  await req.user.save()
+  return res.redirect('/account')
+})
 AccountRouter.route('/sharex')
   .get((req, res) => {
     res.render('pages/account/sharex', {

@@ -2,15 +2,25 @@
 <p class="content">Select a page from the sidebar on the left.</p>
 
 <div class="content">
-  <h3>Upload Key</h3>
-  <input
-    class="input"
-    id="upload-key-input"
-    type="text"
-    disabled="true"
-    value="<%= profile.uploadKey %>"
-  />
-  <button class="button is-primary" onclick="copyKey()">Copy</button>
+  <p>
+      <h3>Upload Key</h3>
+      <input
+        class="input"
+        id="upload-key-input"
+        type="text"
+        disabled="true"
+        value="<%= profile.uploadKey %>"
+      />
+      <button class="button is-primary" onclick="copyKey()">Copy</button>
+  </p>
+  <p>
+    <form action="/account/secure" method="POST">
+      <h3>Secure Names</h3>
+      <h4>Toggle secure names for your file uploads</h4>
+      Secure names are currently <strong><%= profile.longNames ? "ON" : "OFF" %></strong>
+      <button class="button is-warning" type="submit">Toggle</button>
+    </form>
+  </p>
 </div>
 <script>
   window.copyKey = () => {
