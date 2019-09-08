@@ -1,0 +1,86 @@
+<div class="container">
+  <h1 class="title">Registration</h1>
+  <form method="POST">
+    <div class="field">
+      <label class="label">Username</label>
+      <div class="control">
+        <input
+          class="input <%= errors && errors.username ? 'is-danger' : ''%>"
+          type="text"
+          name="username"
+          value="<%= values.username %>"
+        />
+      </div>
+      <% if (errors && errors.username) { %>
+      <p class="help is-danger">
+        <%= errors.username %>
+      </p>
+      <% } %>
+    </div>
+    <div class="field">
+      <label class="label">Email</label>
+      <div class="control">
+        <input
+          class="input <%= errors && errors.email ? 'is-danger' : ''%>"
+          type="email"
+          name="email"
+          value="<%= values.email %>"
+        />
+      </div>
+      <% if (errors && errors.email) { %>
+      <p class="help is-danger">
+        <%= errors.email %>
+      </p>
+      <% } %>
+    </div>
+    <div class="field">
+      <label class="label">Password</label>
+      <div class="control">
+        <input
+          class="input <%= errors && errors.password ? 'is-danger' : ''%>"
+          type="password"
+          name="password"
+        />
+      </div>
+      <% if (errors && errors.password) { %>
+      <p class="help is-danger">
+        <%= errors.password %>
+      </p>
+      <% } %>
+    </div>
+    <div class="field">
+      <label class="label">Invitation Code</label>
+      <div class="control">
+        <input
+          class="input <%= errors && errors.invite ? 'is-danger' : ''%>"
+          type="text"
+          name="invite"
+          value="<%= values.invite %>"
+        />
+      </div>
+      <p class="help">
+        You may request an invite from the
+        <a href="/discord" target="_blank">Discord</a>
+      </p>
+      <% if (errors && errors.invite) { %>
+      <p class="help is-danger">
+        <%= errors.invite %>
+      </p>
+      <% } %>
+    </div>
+
+    <div class="field">
+      <div class="control">
+        <label class="checkbox">
+          <input type="checkbox" name="agree" />
+          I agree to the <a href="/legal/terms">terms and conditions</a>
+        </label>
+      </div>
+    </div>
+    <div class="field">
+      <div class="control">
+        <button class="button is-link" type="submit">Submit</button>
+      </div>
+    </div>
+  </form>
+</div>

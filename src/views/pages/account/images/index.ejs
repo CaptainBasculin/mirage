@@ -1,0 +1,27 @@
+<h1 class="title">Images</h1>
+<h2 class="subtitle">
+  View all images you have uploaded
+</h2>
+
+<table class="table is-hoverable is-fullwidth is-striped">
+  <thead>
+    <tr>
+      <th>Path</th>
+      <th>Host</th>
+      <th>Upload Date</th>
+      <th>Size</th>
+      <th>Content Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% profile.images.map(image => { %>
+    <tr>
+      <td><a href="<%= image.url %>"><%= image.path %></a></td>
+      <td><%= image.host %></td>
+      <td><%= image.uploadDate %></td>
+      <td><%= image.size %></td>
+      <td><%= image.contentType %></td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>

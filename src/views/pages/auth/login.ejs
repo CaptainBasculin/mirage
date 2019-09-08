@@ -1,0 +1,43 @@
+<div class="container">
+  <h1 class="title">Login</h1>
+  <form method="POST">
+    <div class="field">
+      <label class="label">Username</label>
+      <div class="control">
+        <input
+          class="input <%= errors && errors.username ? 'is-danger' : ''%>"
+          type="text"
+          name="username"
+          value="<%= values.username %>"
+        />
+      </div>
+      <% if (errors && errors.username) { %>
+      <p class="help is-danger">
+        <%= errors.username %>
+      </p>
+      <% } %>
+    </div>
+    <div class="field">
+      <label class="label">Password</label>
+      <div class="control">
+        <input
+          class="input <%= errors && errors.password ? 'is-danger' : ''%>"
+          type="password"
+          name="password"
+        />
+      </div>
+      <% if (errors && errors.password) { %>
+      <p class="help is-danger">
+        <%= errors.password %>
+      </p>
+      <% } %>
+    </div>
+
+    <div class="field is-grouped">
+      <div class="control">
+        <button class="button is-link" type="submit">Login</button>
+        <a class="is-link" href="/auth/forgot_password">Forgot Password</a>
+      </div>
+    </div>
+  </form>
+</div>

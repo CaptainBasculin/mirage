@@ -1,0 +1,36 @@
+<h1 class="title">Invites</h1>
+<h2 class="subtitle">
+  View all the invites you have created, or create new ones
+</h2>
+
+<% if (profile.admin) { %>
+<form action="/account/invites/create" method="POST">
+  <button class="button is-primary" type="submit">Create Invite</button>
+</form>
+<% } %>
+
+<table class="table is-hoverable is-fullwidth is-striped">
+  <thead>
+    <tr>
+      <th>Invite</th>
+      <th>Created on</th>
+      <th>Redeemed</th>
+      <th>Redeemed By</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% profile.invites.map(invite => { %>
+    <tr>
+      <td><%= invite.invite %></td>
+      <td><%= invite.createdOn %></td>
+      <td>
+        <% if (invite.redeemed) { %><strong>Yes</strong> <% } else { %> No<% }
+        %>
+      </td>
+      <td>
+        <% if (invite.redeemed) { %> <%= invite.redeemedBy %> <% } %>
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>

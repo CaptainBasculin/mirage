@@ -1,0 +1,24 @@
+<h1 class="title">Account Dashboard</h1>
+<p class="content">Select a page from the sidebar on the left.</p>
+
+<div class="content">
+  <h3>Upload Key</h3>
+  <input
+    class="input"
+    id="upload-key-input"
+    type="text"
+    disabled="true"
+    value="<%= profile.uploadKey %>"
+  />
+  <button class="button is-primary" onclick="copyKey()">Copy</button>
+</div>
+<script>
+  window.copyKey = () => {
+    let element = document.getElementById('upload-key-input')
+    element.disabled = false
+    element.select()
+    element.setSelectionRange(0, 99999)
+    document.execCommand('copy')
+    element.disabled = true
+  }
+</script>
