@@ -9,7 +9,7 @@
   "scripts": {
     "build": "yarn build:typescript && yarn build:copy",
     "build:typescript": "tsc",
-    "build:copy": "copyfiles src/**/*.ejs dist/",
+    "build:copy": "copyfiles --up 1 src/**/*.ejs dist/",
     "start": "node dist/index.js",
     "dev": "ts-node-dev src/index.ts"
   },
