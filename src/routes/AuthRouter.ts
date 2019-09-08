@@ -4,6 +4,7 @@ import argon2 from 'argon2'
 import bodyParser from 'body-parser'
 import { randomUserId, randomKey } from '../utils/RandomUtil'
 import sgMail from '@sendgrid/mail'
+import { Invite } from '../database/entities/Invite'
 const AuthRouter = express.Router()
 
 AuthRouter.use(
@@ -106,6 +107,33 @@ AuthRouter.route('/register')
         errors
       })
     }
+    if (!process.env.INVITES_DISABLED) {
+      let invite = await Invite.findOne({
+        where: {
+          invite: req.body.invite,
+          redeemed: false
+        },
+        relations: ['creator']
+      })
+      if (!invite) {
+        return res.render('pages/auth/register', {
+          values: req.body,
+          errors: {
+            invite: 'Invitation code is invalid'
+          }
+        })
+      }
+      invite.redeemed = true
+      invite.redeemedBy = req.body.username
+      await invite.save()
+      await sgMail.send({
+        to: invite.creator.email,
+        from: process.env.EMAIL_FROM!,
+        subject: 'Mirage: one of your invites was used',
+        html: `Hello, ${invite.creator.username}!<br/>Someone used your invite: "${invite.invite}", and signed up with the username "${req.body.username}".`
+      })
+    }
+
     let user = new User()
     user.id = randomUserId()
     user.username = req.body.username
@@ -122,6 +150,7 @@ AuthRouter.route('/register')
       subject: 'Mirage: confirm your email',
       html: `Hello, ${user.username}!<br/>Someone signed up for an account with your email address (hopefully you!)<br/>Please confirm your email by pressing the link below.<br/><a href="${process.env.BASE_URL}/auth/confirm_email?key=${user.emailVerificationToken}">${process.env.BASE_URL}/auth/confirm_email?key=${user.emailVerificationToken}</a>`
     })
+
     res.render('pages/auth/register_success')
   })
 
