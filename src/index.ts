@@ -112,10 +112,14 @@ createConnection({
   entities: [__dirname + '/database/entities/**/*.{ts,js}'],
   migrations: [__dirname + '/database/migrations/**/*.{ts,js}'],
   subscribers: [__dirname + '/database/subscribers/**/*.{ts,js}']
-}).then(() => {
-  app.listen(process.env.PORT, () => {
-    console.log('listening on port', process.env.PORT)
-  })
 })
+  .then(() => {
+    app.listen(process.env.PORT, () => {
+      console.log('listening on port', process.env.PORT)
+    })
+  })
+  .catch(err => {
+    console.error(err)
+  })
 
 export default app
