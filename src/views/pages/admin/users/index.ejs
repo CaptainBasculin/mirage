@@ -1,0 +1,33 @@
+<h1 class="title">Users</h1>
+<h2 class="subtitle">
+  View all of the users on the instance
+</h2>
+
+<table class="table is-hoverable is-fullwidth is-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Username</th>
+      <th>Email</th>
+      <th>Moderator</th>
+      <th>Admin</th>
+      <th>Images</th>
+      <th>Invites</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% users.map(user => { %>
+    <tr>
+      <td><code><%= user.id %></code></td>
+      <td>
+        <a href="/admin/users/<%= user.username %>"><%= user.username %></a>
+      </td>
+      <td><%= user.email %></td>
+      <td><%= user.moderator %></td>
+      <td><%= user.admin %></td>
+      <td><%= user.images.length %></td>
+      <td><%= user.invites.length %></td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>

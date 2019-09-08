@@ -76,6 +76,7 @@ AccountRouter.route('/invites/create').post(async (req, res) => {
 })
 
 AccountRouter.route('/images').get((req, res) => {
+  res.locals.profile.images = res.locals.profile.images.reverse()
   res.render('pages/account/images/index', {
     layout: 'layouts/account'
   })

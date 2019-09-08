@@ -12,6 +12,7 @@ import LegalRouter from './routes/LegalRouter'
 import ms from 'ms'
 import AccountRouter from './routes/AccountRouter'
 import ApiRouter from './routes/ApiRouter'
+import AdminRouter from './routes/AdminRouter'
 dotenv.config()
 
 const RedisStore = _RedisStore(session)
@@ -89,7 +90,7 @@ app.use('/auth', AuthRouter)
 app.use('/account', AccountRouter)
 app.use('/legal', LegalRouter)
 app.use('/api', ApiRouter)
-
+app.use('/admin', AdminRouter)
 app.get('/', (req, res) => {
   res.render('pages/index', {
     users: 0,

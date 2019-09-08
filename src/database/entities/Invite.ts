@@ -41,4 +41,18 @@ export class Invite extends BaseEntity {
       redeemedBy: this.redeemedBy
     }
   }
+  adminSerialize() {
+    return {
+      id: this.id,
+      invite: this.invite,
+      redeemed: this.redeemed,
+      createdOn: this.createdOn,
+      redeemedBy: this.redeemedBy,
+      creator: {
+        id: this.creator.id,
+        username: this.creator.username,
+        email: this.creator.email
+      }
+    }
+  }
 }

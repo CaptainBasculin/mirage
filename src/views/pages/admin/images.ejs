@@ -1,0 +1,39 @@
+<h1 class="title">Images</h1>
+<h2 class="subtitle">
+  View all of the images on the instance
+</h2>
+
+<table class="table is-hoverable is-fullwidth is-striped">
+  <thead>
+    <tr>
+      <th>Path</th>
+      <th>Host</th>
+      <th>Upload Date</th>
+      <th>Uploader</th>
+      <th>Size</th>
+      <th>Content Type</th>
+      <th>Deleted</th>
+      <th>Hash</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% images.map(image => { %>
+    <tr>
+      <td><a href="<%= image.url %>"><%= image.path %></a></td>
+      <td><%= image.host %></td>
+      <td><%= image.uploadDate %></td>
+      <td>
+        <a href="/admin/users/<%= image.uploader.username %>"
+          ><%= image.uploader.username %></a
+        >
+      </td>
+      <td><%= image.size %></td>
+      <td><%= image.contentType %></td>
+      <td>
+        <% if (image.deleted) { %><strong>Yes</strong> <% } else { %> No<% } %>
+      </td>
+      <td><code><%= image.hash %></code></td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>

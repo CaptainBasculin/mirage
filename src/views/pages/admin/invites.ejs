@@ -1,0 +1,40 @@
+<h1 class="title">Invites</h1>
+<h2 class="subtitle">
+  View all of the invites on the instance
+</h2>
+
+<table class="table is-hoverable is-fullwidth is-striped">
+  <thead>
+    <tr>
+      <th>Invite</th>
+      <th>Created on</th>
+      <th>Creator</th>
+      <th>Redeemed</th>
+      <th>Redeemed By</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% invites.map(invite => { %>
+    <tr>
+      <td><%= invite.invite %></td>
+      <td><%= invite.createdOn %></td>
+      <td>
+        <a href="/admin/users/<%= invite.creator.username %>"
+          ><%= invite.creator.username %></a
+        >
+      </td>
+      <td>
+        <% if (invite.redeemed) { %><strong>Yes</strong> <% } else { %> No<% }
+        %>
+      </td>
+      <td>
+        <% if (invite.redeemed) { %>
+        <a href="/admin/users/<%= invite.redeemedBy %>"
+          ><%= invite.redeemedBy %></a
+        >
+        <% } %>
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>

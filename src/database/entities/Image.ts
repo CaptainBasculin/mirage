@@ -56,4 +56,24 @@ export class Image extends BaseEntity {
       deleted: this.deleted
     }
   }
+  serialize() {
+    return {
+      id: this.id,
+      shortId: this.shortId,
+      host: this.host,
+      contentType: this.contentType,
+      hash: this.hash,
+      uploadDate: this.uploadDate,
+      size: this.size,
+      url: this.url,
+      path: this.path,
+      originalName: this.originalName,
+      deleted: this.deleted,
+      uploader: {
+        id: this.uploader.id,
+        username: this.uploader.username,
+        email: this.uploader.email
+      }
+    }
+  }
 }
