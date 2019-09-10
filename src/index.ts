@@ -13,6 +13,9 @@ import ms from 'ms'
 import AccountRouter from './routes/AccountRouter'
 import ApiRouter from './routes/ApiRouter'
 import AdminRouter from './routes/AdminRouter'
+import Cache from './utils/CacheUtil'
+import { Image } from './database/entities/Image'
+import { ShortenedUrl } from './database/entities/ShortenedUrl'
 dotenv.config()
 
 const RedisStore = _RedisStore(session)
@@ -91,11 +94,38 @@ app.use('/account', AccountRouter)
 app.use('/legal', LegalRouter)
 app.use('/api', ApiRouter)
 app.use('/admin', AdminRouter)
-app.get('/', (req, res) => {
-  res.render('pages/index', {
-    users: 0,
-    images: 0
-  })
+
+async function getIndexLocals(): Promise<{
+  users: number
+  images: number
+  urls: number
+}> {
+  // typescript what the fuck
+  let users = ((await Cache.get('index.users')) as any) as number
+  let images = ((await Cache.get('index.images')) as any) as number
+  let urls = ((await Cache.get('index.urls')) as any) as number
+  if (!users) {
+    users = (await User.find()).length
+    await Cache.set('index.users', users)
+  }
+  if (!images) {
+    images = (await Image.find()).length
+    await Cache.set('index.images', images)
+  }
+  if (!urls) {
+    urls = (await ShortenedUrl.find()).length
+    await Cache.set('index.urls', urls)
+  }
+  return {
+    users,
+    images,
+    urls
+  }
+}
+
+app.get('/', async (req, res) => {
+  let locals = await getIndexLocals()
+  res.render('pages/index', locals)
 })
 
 app.get('/discord', (req, res) => {

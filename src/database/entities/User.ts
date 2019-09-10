@@ -1,6 +1,7 @@
 import { Entity, Column, BaseEntity, PrimaryColumn, OneToMany } from 'typeorm'
 import { Image } from './Image'
 import { Invite } from './Invite'
+import { ShortenedUrl } from './ShortenedUrl'
 
 @Entity()
 export class User extends BaseEntity {
@@ -52,6 +53,9 @@ export class User extends BaseEntity {
   @OneToMany(type => Invite, invite => invite.creator)
   invites: Invite[]
 
+  @OneToMany(type => ShortenedUrl, url => url.creator)
+  urls: ShortenedUrl[]
+
   serialize() {
     return {
       id: this.id,
@@ -66,7 +70,8 @@ export class User extends BaseEntity {
         : [],
       invites: this.invites
         ? this.invites.map(invite => invite.serialize())
-        : []
+        : [],
+      urls: this.urls ? this.urls.map(url => url.serialize()) : []
     }
   }
 }
