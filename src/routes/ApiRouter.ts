@@ -141,22 +141,29 @@ ApiRouter.route(['/image/:file', '/image/*/:file']).get(async (req, res) => {
     }
     return res.redirect(shortUrl.url)
   }
+  if (req.params.file === 'favicon.ico') {
+    let [_file] = await bucket.file('/meta/logo.png').get()
+    let buf = await rb(_file.createReadStream())
+    return res.contentType('image/png').send(buf)
+  }
   let image = await Image.findOne({
     where: {
       path: req.params.file
     }
   })
+
   if (image && image.deleted) {
+    let [_file] = await bucket
+      .file(`/meta/deletion-${image.deletionReason.toLowerCase()}.png`)
+      .get()
+    let buf = await rb(_file.createReadStream())
     return res
       .status(404)
-      .send(
-        image.deletionReason === 'USER'
-          ? 'Image was deleted at request of user'
-          : 'Image was deleted by staff'
-      )
+      .contentType('image/png')
+      .send(buf)
   }
-
   let file = null
+
   let mimeType = image ? image.contentType : 'image/png'
   if (!image) {
     try {
@@ -167,13 +174,15 @@ ApiRouter.route(['/image/:file', '/image/*/:file']).get(async (req, res) => {
         let [_file] = await oldBucket2.file(req.params.file).get()
         file = _file
       } catch (err) {
-        return res.status(404).send('Image not found')
+        let [_file] = await bucket.file('/meta/image-notfound.png').get()
+        file = _file
       }
     }
   } else {
     let [_file] = await bucket.file(req.params.file).get()
     file = _file
   }
+
   let buf = await rb(file.createReadStream())
   return res.contentType(mimeType).send(buf)
 })
