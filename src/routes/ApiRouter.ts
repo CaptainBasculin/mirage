@@ -124,7 +124,7 @@ ApiRouter.route(['/image/:file', '/image/*/:file']).get(async (req, res) => {
     // Shortened url
     let shortUrl = await ShortenedUrl.findOne({
       where: {
-        path: req.params.file
+        shortId: req.params.file
       }
     })
     if (!shortUrl) {
