@@ -26,6 +26,11 @@ export class ShortenedUrl extends BaseEntity {
   })
   deleted: boolean
 
+  @Column({
+    default: 'N/A'
+  })
+  deletionReason: string
+
   userSerialize() {
     return {
       id: this.id,
@@ -34,11 +39,7 @@ export class ShortenedUrl extends BaseEntity {
       creationDate: this.creationDate,
       url: this.url,
       deleted: this.deleted,
-      creator: {
-        id: this.creator.id,
-        username: this.creator.username,
-        email: this.creator.email
-      }
+      deletionReason: this.deletionReason
     }
   }
   serialize() {
@@ -49,21 +50,12 @@ export class ShortenedUrl extends BaseEntity {
       creationDate: this.creationDate,
       url: this.url,
       deleted: this.deleted,
+      deletionReason: this.deletionReason,
       creator: {
         id: this.creator.id,
         username: this.creator.username,
         email: this.creator.email
       }
-    }
-  }
-  safeSerialize() {
-    return {
-      id: this.id,
-      shortId: this.shortId,
-      host: this.host,
-      creationDate: this.creationDate,
-      url: this.url,
-      deleted: this.deleted
     }
   }
 }

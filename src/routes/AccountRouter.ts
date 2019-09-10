@@ -5,6 +5,7 @@ import randomstring from 'randomstring'
 import bodyParser from 'body-parser'
 import { Image } from '../database/entities/Image'
 import { ShortenedUrl } from '../database/entities/ShortenedUrl'
+import { bucket } from '../utils/StorageUtil'
 const AccountRouter = express.Router()
 AccountRouter.use(
   bodyParser.urlencoded({
@@ -119,11 +120,34 @@ AccountRouter.route('/images').get((req, res) => {
     images: res.locals.profile.images.filter((image: Image) => !image.deleted)
   })
 })
-AccountRouter.route('/images/nuke').get((req, res) => {
-  res.render('pages/account/images/nuke', {
-    layout: 'layouts/account'
+AccountRouter.route('/images/nuke')
+  .get((req, res) => {
+    res.render('pages/account/images/nuke', {
+      layout: 'layouts/account',
+      stage: parseInt(req.query.stage || '0')
+    })
   })
-})
+  .post(async (req, res) => {
+    let stage = parseInt(req.body.stage)
+    console.log(stage)
+    if (stage === 0) {
+      return res.redirect('/account/images/nuke?stage=1')
+    }
+    let images = await Image.find({
+      where: {
+        uploader: req.user.id
+      }
+    })
+    await Promise.all(
+      images.map(async image => {
+        await bucket.file(image.path).delete()
+        image.deleted = true
+        image.deletionReason = 'USER'
+        await image.save()
+      })
+    )
+    return res.redirect('/account/images/nuke?stage=2')
+  })
 
 AccountRouter.route('/urls').get((req, res) => {
   res.locals.profile.urls = res.locals.profile.urls.reverse()
@@ -132,10 +156,32 @@ AccountRouter.route('/urls').get((req, res) => {
     urls: res.locals.profile.urls.filter((url: ShortenedUrl) => !url.deleted)
   })
 })
-AccountRouter.route('/urls/nuke').get((req, res) => {
-  res.render('pages/account/urls/nuke', {
-    layout: 'layouts/account'
+AccountRouter.route('/urls/nuke')
+  .get((req, res) => {
+    res.render('pages/account/urls/nuke', {
+      layout: 'layouts/account',
+      stage: parseInt(req.query.stage || '0')
+    })
   })
-})
+  .post(async (req, res) => {
+    let stage = parseInt(req.body.stage)
+    console.log(stage)
+    if (stage === 0) {
+      return res.redirect('/account/urls/nuke?stage=1')
+    }
+    let urls = await ShortenedUrl.find({
+      where: {
+        creator: req.user.id
+      }
+    })
+    await Promise.all(
+      urls.map(async url => {
+        url.deleted = true
+        url.deletionReason = 'USER'
+        await url.save()
+      })
+    )
+    return res.redirect('/account/urls/nuke?stage=2')
+  })
 
 export default AccountRouter

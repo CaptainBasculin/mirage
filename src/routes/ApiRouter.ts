@@ -130,6 +130,15 @@ ApiRouter.route(['/image/:file', '/image/*/:file']).get(async (req, res) => {
     if (!shortUrl) {
       return res.status(404).send('URL not found')
     }
+    if (shortUrl.deleted) {
+      return res
+        .status(404)
+        .send(
+          shortUrl.deletionReason === 'USER'
+            ? 'Shortened URL was deleted at request of user'
+            : 'Shortened URL was deleted by staff'
+        )
+    }
     return res.redirect(shortUrl.url)
   }
   let image = await Image.findOne({
@@ -137,6 +146,16 @@ ApiRouter.route(['/image/:file', '/image/*/:file']).get(async (req, res) => {
       path: req.params.file
     }
   })
+  if (image && image.deleted) {
+    return res
+      .status(404)
+      .send(
+        image.deletionReason === 'USER'
+          ? 'Image was deleted at request of user'
+          : 'Image was deleted by staff'
+      )
+  }
+
   let file = null
   let mimeType = image ? image.contentType : 'image/png'
   if (!image) {

@@ -71,7 +71,7 @@ export class User extends BaseEntity {
       invites: this.invites
         ? this.invites.map(invite => invite.serialize())
         : [],
-      urls: this.urls ? this.urls.map(url => url.safeSerialize()) : []
+      urls: this.urls ? this.urls.map(url => url.userSerialize()) : []
     }
   }
 }

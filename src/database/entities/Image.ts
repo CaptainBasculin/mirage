@@ -41,6 +41,11 @@ export class Image extends BaseEntity {
   })
   deleted: boolean
 
+  @Column({
+    default: 'N/A'
+  })
+  deletionReason: string
+
   userSerialize() {
     return {
       id: this.id,
@@ -53,7 +58,8 @@ export class Image extends BaseEntity {
       url: this.url,
       path: this.path,
       originalName: this.originalName,
-      deleted: this.deleted
+      deleted: this.deleted,
+      deletionReason: this.deletionReason
     }
   }
   serialize() {
@@ -69,6 +75,7 @@ export class Image extends BaseEntity {
       path: this.path,
       originalName: this.originalName,
       deleted: this.deleted,
+      deletionReason: this.deletionReason,
       uploader: {
         id: this.uploader.id,
         username: this.uploader.username,
