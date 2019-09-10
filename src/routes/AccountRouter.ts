@@ -3,6 +3,8 @@ import { Invite } from '../database/entities/Invite'
 import { randomUserId } from '../utils/RandomUtil'
 import randomstring from 'randomstring'
 import bodyParser from 'body-parser'
+import { Image } from '../database/entities/Image'
+import { ShortenedUrl } from '../database/entities/ShortenedUrl'
 const AccountRouter = express.Router()
 AccountRouter.use(
   bodyParser.urlencoded({
@@ -113,7 +115,8 @@ AccountRouter.route('/invites/create').post(async (req, res) => {
 AccountRouter.route('/images').get((req, res) => {
   res.locals.profile.images = res.locals.profile.images.reverse()
   res.render('pages/account/images/index', {
-    layout: 'layouts/account'
+    layout: 'layouts/account',
+    images: res.locals.profile.images.filter((image: Image) => !image.deleted)
   })
 })
 AccountRouter.route('/images/nuke').get((req, res) => {
@@ -125,7 +128,8 @@ AccountRouter.route('/images/nuke').get((req, res) => {
 AccountRouter.route('/urls').get((req, res) => {
   res.locals.profile.urls = res.locals.profile.urls.reverse()
   res.render('pages/account/urls/index', {
-    layout: 'layouts/account'
+    layout: 'layouts/account',
+    urls: res.locals.profile.urls.filter((url: ShortenedUrl) => !url.deleted)
   })
 })
 AccountRouter.route('/urls/nuke').get((req, res) => {
