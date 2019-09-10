@@ -13,6 +13,7 @@
       <th>Admin</th>
       <th>Images</th>
       <th>Invites</th>
+      <th>Shortened URLs</th>
     </tr>
   </thead>
   <tbody>
@@ -27,6 +28,7 @@
       <td><%= user.admin %></td>
       <td><%= user.images.length %></td>
       <td><%= user.invites.length %></td>
+      <td><%= user.urls.length %></td>
     </tr>
     <% }) %>
   </tbody>

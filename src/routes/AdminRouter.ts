@@ -71,7 +71,7 @@ AdminRouter.route('/users/:id').get(authMiddleware, async (req, res) => {
     where: {
       username: req.params.id
     },
-    relations: ['invites', 'images']
+    relations: ['invites', 'images', 'urls']
   })
   if (!user) {
     return res.status(404)
@@ -79,6 +79,7 @@ AdminRouter.route('/users/:id').get(authMiddleware, async (req, res) => {
   let serialized = user!.serialize()
   serialized.images = serialized.images.reverse()
   serialized.invites = serialized.invites.reverse()
+  serialized.urls = serialized.urls.reverse()
   res.render('pages/admin/users/user', {
     layout: 'layouts/admin',
     user: user!.serialize()
