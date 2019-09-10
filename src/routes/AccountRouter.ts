@@ -1,6 +1,6 @@
 import express from 'express'
 import { Invite } from '../database/entities/Invite'
-import { randomUserId } from '../utils/RandomUtil'
+import { randomUserId, randomKey } from '../utils/RandomUtil'
 import randomstring from 'randomstring'
 import bodyParser from 'body-parser'
 import { Image } from '../database/entities/Image'
@@ -39,6 +39,11 @@ AccountRouter.route('/').get((req, res) => {
   res.render('pages/account/index', {
     layout: 'layouts/account'
   })
+})
+AccountRouter.route('/regenerate_key').post(async (req, res) => {
+  req.user.uploadKey = randomKey()
+  await req.user.save()
+  return res.redirect('/account')
 })
 AccountRouter.route('/secure_names').post(async (req, res) => {
   req.user.longNames = !req.user.longNames

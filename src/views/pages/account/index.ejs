@@ -1,27 +1,50 @@
 <h1 class="title">Account Dashboard</h1>
-<p class="content">Select a page from the sidebar on the left.</p>
+<h2 class="subtitle">Select a page from the sidebar on the left.</h2>
 
 <div class="content">
-  <p>
+  <div>
+    <form action="/account/regenerate_key" method="POST">
       <h3>Upload Key</h3>
-      <input
-        class="input"
-        id="upload-key-input"
-        type="text"
-        disabled="true"
-        value="<%= profile.uploadKey %>"
-      />
-      <button class="button is-primary" onclick="copyKey()">Copy</button>
-  </p>
-  <p>
+      <div class="field">
+        <input
+          class="input"
+          id="upload-key-input"
+          type="text"
+          disabled="true"
+          value="<%= profile.uploadKey %>"
+        />
+      </div>
+
+      <div class="field is-grouped">
+        <p class="control">
+          <button class="button is-primary" type="button" onclick="copyKey()">
+            Copy
+          </button>
+        </p>
+
+        <p class="control">
+          <button class="button is-warning" type="submit">Regenerate</button>
+        </p>
+      </div>
+    </form>
+  </div>
+  <br />
+  <div>
     <form action="/account/secure_names" method="POST">
       <h3>Secure Names</h3>
       <h4>Toggle secure names for your file uploads</h4>
-      Secure names are currently <strong><%= profile.longNames ? "ON" : "OFF" %></strong>
-      <button class="button is-warning" type="submit">Toggle</button>
+      <div class="field">
+        Secure names are currently
+        <strong><%= profile.longNames ? "ON" : "OFF" %></strong>
+      </div>
+
+      <div class="field">
+        <button class="button is-warning" type="submit">Toggle</button>
+      </div>
     </form>
-  </p>
+  </div>
 </div>
+
 <script>
   window.copyKey = () => {
     let element = document.getElementById('upload-key-input')
