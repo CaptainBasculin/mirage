@@ -62,7 +62,8 @@ AccountRouter.route('/urlshortener')
       Name: `Mirage URL Shortener (${req.user.username} on ${req.body.host})`,
       Arguments: {
         key: req.user.uploadKey,
-        host: req.body.host
+        host: req.body.host,
+        url: '$input$'
       }
     }
     res.setHeader(
