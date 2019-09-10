@@ -1,0 +1,29 @@
+<h1 class="title">Shortened URLs</h1>
+<h2 class="subtitle">
+  View all shortened URLs you have created
+</h2>
+
+<table class="table is-hoverable is-fullwidth is-striped">
+  <thead>
+    <tr>
+      <th>Path</th>
+      <th>Real URL</th>
+      <th>Host</th>
+      <th>Creation Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% profile.urls.map(url => { %>
+    <tr>
+      <td>
+        <a href="https://<%= url.host %>/<%= url.shortId %>">
+          <%= url.shortId %>
+        </a>
+      </td>
+      <td><a href="<%= url.url %>"><%= url.url %></a></td>
+      <td><%= url.host %></td>
+      <td><%= url.creationDate %></td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>

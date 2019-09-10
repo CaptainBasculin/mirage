@@ -50,7 +50,7 @@ app.use(async (req, res, next) => {
       where: {
         id: req.session!.user
       },
-      relations: ['images', 'invites']
+      relations: ['images', 'invites', 'urls']
     })
     if (!user) return next()
     req.user = user

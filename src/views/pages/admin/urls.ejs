@@ -1,0 +1,39 @@
+<h1 class="title">Shortened URLs</h1>
+<h2 class="subtitle">
+  View all of the shortened URLs on the instance
+</h2>
+
+<table class="table is-hoverable is-fullwidth is-striped">
+  <thead>
+    <tr>
+      <th>Path</th>
+      <th>Real URL</th>
+      <th>Host</th>
+      <th>Creation Date</th>
+      <th>Creator</th>
+      <th>Deleted</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% urls.map(url => { %>
+    <tr>
+      <td>
+        <a href="https://<%= url.host %>/<%= url.shortId %>">
+          <%= url.shortId %>
+        </a>
+      </td>
+      <td><a href="<%= url.url %>"><%= url.url %></a></td>
+      <td><%= url.host %></td>
+      <td><%= url.creationDate %></td>
+      <td>
+        <a href="/admin/users/<%= url.creator.username %>"
+          ><%= url.creator.username %></a
+        >
+      </td>
+      <td>
+        <% if (url.deleted) { %><strong>Yes</strong> <% } else { %> No<% } %>
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>

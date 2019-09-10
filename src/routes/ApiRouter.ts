@@ -8,7 +8,15 @@ import { randomImageId, randomUserId } from '../utils/RandomUtil'
 import { Image } from '../database/entities/Image'
 import mime from 'mime-types'
 import rb from 'raw-body'
+import { ShortenedUrl } from '../database/entities/ShortenedUrl'
 const ApiRouter = express.Router()
+
+ApiRouter.use(bodyParser.json())
+ApiRouter.use(
+  bodyParser.urlencoded({
+    extended: true
+  })
+)
 
 const upload = multer({
   storage: multer.memoryStorage()
@@ -86,10 +94,44 @@ ApiRouter.route('/upload/pomf/:key').post(
   }
 )
 
+ApiRouter.route('/shorten').post(async (req, res) => {
+  let key = req.body.key
+  let user = await User.findOne({
+    where: {
+      uploadKey: key
+    }
+  })
+  if (!user) {
+    return res.status(401).send('Upload key is invalid')
+  }
+  let host = req.body.host || req.hostname || 'mirage.re'
+  let url = new ShortenedUrl()
+  url.id = randomUserId()
+  url.creator = user
+  url.host = host
+  url.shortId = randomImageId(user.longNames)
+  url.url = req.body.url
+  url.creationDate = new Date()
+  await url.save()
+  return res.send(`https://${host}/${url.shortId}`)
+})
+
 ApiRouter.route('/image').get((req, res) => {
   return res.redirect(process.env.BASE_URL!)
 })
 ApiRouter.route(['/image/:file', '/image/*/:file']).get(async (req, res) => {
+  if (req.params.file && !req.params.file.includes('.')) {
+    // Shortened url
+    let shortUrl = await ShortenedUrl.findOne({
+      where: {
+        path: req.params.file
+      }
+    })
+    if (!shortUrl) {
+      return res.status(404).send('URL not found')
+    }
+    return res.redirect(shortUrl.url)
+  }
   let image = await Image.findOne({
     where: {
       path: req.params.file

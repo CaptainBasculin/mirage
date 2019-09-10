@@ -4,6 +4,7 @@ import { NextFunction } from 'connect'
 import { Invite } from '../database/entities/Invite'
 import { Image } from '../database/entities/Image'
 import { User } from '../database/entities/User'
+import { ShortenedUrl } from '../database/entities/ShortenedUrl'
 const AdminRouter = express.Router()
 AdminRouter.use(
   bodyParser.urlencoded({
@@ -42,6 +43,16 @@ AdminRouter.route('/images').get(authMiddleware, async (req, res) => {
   res.render('pages/admin/images', {
     layout: 'layouts/admin',
     images: images.map(image => image.serialize()).reverse()
+  })
+})
+
+AdminRouter.route('/urls').get(authMiddleware, async (req, res) => {
+  let urls = await ShortenedUrl.find({
+    relations: ['creator']
+  })
+  res.render('pages/admin/urls', {
+    layout: 'layouts/admin',
+    urls: urls.map(url => url.serialize()).reverse()
   })
 })
 

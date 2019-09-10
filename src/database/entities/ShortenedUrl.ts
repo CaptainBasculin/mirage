@@ -56,4 +56,14 @@ export class ShortenedUrl extends BaseEntity {
       }
     }
   }
+  safeSerialize() {
+    return {
+      id: this.id,
+      shortId: this.shortId,
+      host: this.host,
+      creationDate: this.creationDate,
+      url: this.url,
+      deleted: this.deleted
+    }
+  }
 }
