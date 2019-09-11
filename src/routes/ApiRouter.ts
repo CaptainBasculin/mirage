@@ -56,6 +56,11 @@ ApiRouter.route('/upload').post(upload.single('file'), async (req, res) => {
   if (!user) {
     return res.status(401).send('Upload key is invalid')
   }
+  if (user.suspended) {
+    return res
+      .status(401)
+      .send('User is suspended, check email for more information')
+  }
   let image = await uploadImage(
     req.body.host || req.hostname || 'mirage.re',
     user,
@@ -74,6 +79,11 @@ ApiRouter.route('/upload/pomf/:key').post(
     })
     if (!user) {
       return res.status(401).send('Upload key is invalid')
+    }
+    if (user.suspended) {
+      return res
+        .status(401)
+        .send('User is suspended, check email for more information')
     }
     let image = await uploadImage(
       req.body.host || req.hostname || 'mirage.re',
@@ -103,6 +113,11 @@ ApiRouter.route('/shorten').post(async (req, res) => {
   })
   if (!user) {
     return res.status(401).send('Upload key is invalid')
+  }
+  if (user.suspended) {
+    return res
+      .status(401)
+      .send('User is suspended, check email for more information')
   }
   let host = req.body.host || req.hostname || 'mirage.re'
   let url = new ShortenedUrl()
