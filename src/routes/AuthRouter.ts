@@ -133,6 +133,15 @@ AuthRouter.route('/register')
           }
         })
       }
+      if (invite.creator.suspended) {
+        return res.render('pages/auth/register', {
+          values: req.body,
+          errors: {
+            invite:
+              'Invitation code is invalid because the creator was suspended'
+          }
+        })
+      }
       invite.redeemed = true
       invite.redeemedBy = req.body.username
       await invite.save()
