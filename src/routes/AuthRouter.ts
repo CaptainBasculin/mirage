@@ -145,6 +145,7 @@ AuthRouter.route('/register')
       invite.redeemed = true
       invite.redeemedBy = req.body.username
       await invite.save()
+      sgMail.setApiKey(process.env.EMAIL_KEY!)
       await sgMail.send({
         to: invite.creator.email,
         from: process.env.EMAIL_FROM!,
@@ -187,6 +188,107 @@ AuthRouter.route('/confirm_email').get(async (req, res) => {
   user.emailVerified = true
   await user.save()
   return res.render('pages/auth/confirm_email')
+})
+
+AuthRouter.route('/forgot_password')
+  .get((req, res) => {
+    res.render('pages/auth/forgot_password', {
+      values: {},
+      errors: {}
+    })
+  })
+  .post(async (req, res) => {
+    let user = await User.findOne({
+      where: {
+        email: req.body.email
+      }
+    })
+    if (!user) {
+      return res.render('pages/auth/forgot_password', {
+        values: req.body,
+        errors: {
+          email: 'Email does not exist'
+        }
+      })
+    }
+    if (user.suspended) {
+      return res.render('pages/auth/forgot_password', {
+        values: req.body,
+        errors: {
+          suspended: user.suspensionReason
+        }
+      })
+    }
+    user.passwordResetPending = true
+    user.passwordResetToken = randomKey()
+    await user.save()
+    sgMail.setApiKey(process.env.EMAIL_KEY!)
+    await sgMail.send({
+      to: user.email,
+      from: process.env.EMAIL_FROM!,
+      subject: 'Mirage: someone requested a password reset',
+      html: `Hello, ${user.username}!<br/>Someone requested a password reset for your account (hopefully you!)<br/>Please reset your password by clicking the link below.<br/><a href="${process.env.BASE_URL}/auth/forgot_password_prompt?key=${user.passwordResetToken}">${process.env.BASE_URL}/auth/forgot_password_prompt?key=${user.passwordResetToken}</a><br/>If this was not you, ignore this email.`
+    })
+    return res.render('pages/auth/forgot_password_success')
+  })
+
+AuthRouter.route('/forgot_password_prompt')
+  .get(async (req, res) => {
+    let user = await User.findOne({
+      where: {
+        passwordResetToken: req.query.key
+      }
+    })
+    if (!user) {
+      return res.render('pages/auth/forgot_password_prompt', {
+        values: {},
+        errors: {
+          tokenInvalid: true
+        },
+        key: req.query.key
+      })
+    }
+    return res.render('pages/auth/forgot_password_prompt', {
+      values: {},
+      errors: {},
+      key: req.query.key
+    })
+  })
+  .post(async (req, res) => {
+    let user = await User.findOne({
+      where: {
+        passwordResetToken: req.body.key
+      }
+    })
+    if (!user) {
+      return res.render('pages/auth/forgot_password_prompt', {
+        values: {},
+        errors: {
+          tokenInvalid: true
+        },
+        key: req.body.key
+      })
+    }
+    if (req.body.password !== req.body.confirmPassword) {
+      return res.render('pages/auth/forgot_password_prompt', {
+        values: {},
+        errors: {
+          confirmPassword: 'Passwords do not match'
+        },
+        key: req.body.key
+      })
+    }
+    let hash = await argon2.hash(req.body.password)
+    user.password = hash
+    await user.save()
+    return res.render('pages/auth/forgot_password_prompt_success')
+  })
+
+AuthRouter.route('/logout').get((req, res) => {
+  delete req.user
+  delete req.session!.user
+  req.session!.loggedIn = false
+  return res.redirect('/')
 })
 
 export default AuthRouter
