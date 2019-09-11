@@ -125,11 +125,7 @@ AdminRouter.route('/users').get(authMiddleware, async (req, res) => {
   })
   res.render('pages/admin/users/index', {
     layout: 'layouts/admin',
-    users: users.map(user => user.serialize()),
-    query: req.query || {
-      message: false,
-      class: false
-    }
+    users: users.map(user => user.serialize())
   })
 })
 
@@ -149,7 +145,11 @@ AdminRouter.route('/users/:id').get(authMiddleware, async (req, res) => {
   serialized.urls = serialized.urls.reverse()
   res.render('pages/admin/users/user', {
     layout: 'layouts/admin',
-    user: user!.serialize()
+    user: user!.serialize(),
+    query: req.query || {
+      message: false,
+      class: false
+    }
   })
 })
 
@@ -176,7 +176,7 @@ AdminRouter.route('/users/:id/suspend').post(
       html: `Hello, ${user.username}!<br/>Your account was suspended.<br/>You were suspended for the reason:<br/>${user.suspensionReason}<br/><br/><br/>Until your suspension is lifted, you may not do the following:<ul><li>Upload images</li><li>Create, use, or distribute invites</li><li>Create shortened URLs</li><li>Login to the account panel</li></ul>.<br/>Contact a staff member on the Discord if you would like to dispute this decision.`
     })
     return res.redirect(
-      `/admin/users/${user.username}?message=User was sucessfully suspended&type=is-success`
+      `/admin/users/${user.username}?message=User was sucessfully suspended&class=is-success`
     )
   }
 )
@@ -204,7 +204,7 @@ AdminRouter.route('/users/:id/unsuspend').post(
       html: `Hello, ${user.username}!<br/>Your account's suspension was lifted.<br/>You now have any privileges you had before your account was suspended.<br/>If any of your images were unavailable while you were suspended, you now have access to view them.<br/>We are sorry for the inconvenience.`
     })
     return res.redirect(
-      `/admin/users/${user.username}?message=User was sucessfully unsuspended&type=is-success`
+      `/admin/users/${user.username}?message=User was sucessfully unsuspended&class=is-success`
     )
   }
 )
