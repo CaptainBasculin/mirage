@@ -125,10 +125,18 @@ ApiRouter.route(['/image/:file', '/image/*/:file']).get(async (req, res) => {
     let shortUrl = await ShortenedUrl.findOne({
       where: {
         shortId: req.params.file
-      }
+      },
+      relations: ['creator']
     })
     if (!shortUrl) {
       return res.status(404).send('URL not found')
+    }
+    if (shortUrl.creator.suspended) {
+      return res
+        .status(404)
+        .send(
+          'The shortened URL you requested is unavailable because the creator was suspended.'
+        )
     }
     if (shortUrl.deleted) {
       return res
@@ -149,7 +157,8 @@ ApiRouter.route(['/image/:file', '/image/*/:file']).get(async (req, res) => {
   let image = await Image.findOne({
     where: {
       path: req.params.file
-    }
+    },
+    relations: ['uploader']
   })
 
   if (image && image.deleted) {
