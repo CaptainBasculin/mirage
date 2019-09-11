@@ -123,7 +123,11 @@ AccountRouter.route('/images').get((req, res) => {
   res.locals.profile.images = res.locals.profile.images.reverse()
   res.render('pages/account/images/index', {
     layout: 'layouts/account',
-    images: res.locals.profile.images.filter((image: Image) => !image.deleted)
+    images: res.locals.profile.images.filter((image: Image) => !image.deleted),
+    query: req.query || {
+      message: false,
+      class: false
+    }
   })
 })
 AccountRouter.route('/images/nuke')
@@ -154,13 +158,51 @@ AccountRouter.route('/images/nuke')
     )
     return res.redirect('/account/images/nuke?stage=2')
   })
-
+AccountRouter.route('/images/:id/delete').get(async (req, res) => {
+  let image = await Image.findOne({
+    where: {
+      id: req.params.id,
+      uploader: req.user.id
+    }
+  })
+  if (!image) {
+    return res.redirect('/account/images?message=No access&class=is-danger')
+  }
+  await bucket.file(image.path).delete()
+  image.deleted = true
+  image.deletionReason = 'USER'
+  await image.save()
+  return res.redirect(
+    `/account/images?message=Image ${image.path} was deleted&class=is-success`
+  )
+})
 AccountRouter.route('/urls').get((req, res) => {
   res.locals.profile.urls = res.locals.profile.urls.reverse()
   res.render('pages/account/urls/index', {
     layout: 'layouts/account',
-    urls: res.locals.profile.urls.filter((url: ShortenedUrl) => !url.deleted)
+    urls: res.locals.profile.urls.filter((url: ShortenedUrl) => !url.deleted),
+    query: req.query || {
+      message: false,
+      class: false
+    }
   })
+})
+AccountRouter.route('/urls/:id/delete').get(async (req, res) => {
+  let url = await ShortenedUrl.findOne({
+    where: {
+      id: req.params.id,
+      creator: req.user.id
+    }
+  })
+  if (!url) {
+    return res.redirect('/account/urls?message=No access&class=is-danger')
+  }
+  url.deleted = true
+  url.deletionReason = 'USER'
+  await url.save()
+  return res.redirect(
+    `/account/urls?message=URL ${url.shortId} was deleted&class=is-success`
+  )
 })
 AccountRouter.route('/urls/nuke')
   .get((req, res) => {

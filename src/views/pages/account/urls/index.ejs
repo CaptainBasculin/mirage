@@ -3,6 +3,17 @@
   View all shortened URLs you have created
 </h2>
 
+<% if (query.message) { %>
+<article class="message <%= query.class %>">
+  <div class="message-header">
+    <p>Message</p>
+  </div>
+  <div class="message-body">
+    <%= query.message %>
+  </div>
+</article>
+<% } %>
+
 <table class="table is-hoverable is-fullwidth is-striped">
   <thead>
     <tr>
@@ -10,6 +21,7 @@
       <th>Real URL</th>
       <th>Host</th>
       <th>Creation Date</th>
+      <th>Delete</th>
     </tr>
   </thead>
   <tbody>
@@ -23,6 +35,11 @@
       <td><a href="<%= url.url %>"><%= url.url %></a></td>
       <td><%= url.host %></td>
       <td><%= url.creationDate %></td>
+      <td>
+        <a class="button is-danger" href="/account/urls/<%= url.id %>/delete">
+          Delete
+        </a>
+      </td>
     </tr>
     <% }) %>
   </tbody>

@@ -3,6 +3,17 @@
   View all images you have uploaded
 </h2>
 
+<% if (query.message) { %>
+<article class="message <%= query.class %>">
+  <div class="message-header">
+    <p>Message</p>
+  </div>
+  <div class="message-body">
+    <%= query.message %>
+  </div>
+</article>
+<% } %>
+
 <table class="table is-hoverable is-fullwidth is-striped">
   <thead>
     <tr>
@@ -11,6 +22,7 @@
       <th>Upload Date</th>
       <th>Size</th>
       <th>Content Type</th>
+      <th>Delete</th>
     </tr>
   </thead>
   <tbody>
@@ -21,6 +33,14 @@
       <td><%= image.uploadDate %></td>
       <td><%= image.size %></td>
       <td><%= image.contentType %></td>
+      <td>
+        <a
+          class="button is-danger"
+          href="/account/images/<%= image.id %>/delete"
+        >
+          Delete
+        </a>
+      </td>
     </tr>
     <% }) %>
   </tbody>
