@@ -60,6 +60,24 @@ app.use(async (req, res, next) => {
     req.loggedIn = false
   }
   res.locals.loggedIn = req.loggedIn
+  res.locals.globalMessage = false
+  res.locals.globalMessageClass = false
+  if (req.loggedIn) {
+    if (req.user.suspended) {
+      if (req.user.admin) {
+        res.locals.globalMessage = `Your account was suspended for the following reason:\n${req.user.suspensionReason}, but you are an admin, which prevented you from being logged out.`
+        res.locals.globalMessageClass = 'is-warning'
+      } else {
+        res.locals.globalMessage = `Your account was suspended for the following reason:\n${req.user.suspensionReason}. You have been logged out.`
+        res.locals.globalMessageClass = 'is-danger'
+        req.loggedIn = false
+        delete req.user
+        delete req.session
+        res.locals.profile = undefined
+        res.locals.loggedIn = false
+      }
+    }
+  }
   return next()
 })
 app.use((req, res, next) => {
