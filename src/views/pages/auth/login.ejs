@@ -11,6 +11,20 @@
     </div>
   </article>
   <h1 class="title">Login</h1>
+
+  <% if (errors && errors.suspended) { %>
+  <article class="message is-danger">
+    <div class="message-header">
+      <p>Account is Suspended</p>
+    </div>
+    <div class="message-body">
+      Your account was suspended for the following reason:<br />
+      <%= errors.suspended %>.<br />
+      Check your email for more information.
+    </div>
+  </article>
+  <% } %>
+
   <form method="POST">
     <div class="field">
       <label class="label">Username</label>

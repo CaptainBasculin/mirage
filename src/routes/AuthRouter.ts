@@ -60,6 +60,16 @@ AuthRouter.route('/login')
         }
       })
     }
+
+    if (user.suspended && !user.admin) {
+      return res.render('pages/auth/login', {
+        values: req.body,
+        errors: {
+          suspended: user.suspensionReason
+        }
+      })
+    }
+
     req.session!.user = user.id
     req.session!.loggedIn = true
     res.redirect('/')

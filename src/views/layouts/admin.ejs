@@ -11,6 +11,16 @@
     <div class="content-main">
       <% include ../includes/navbar %>
       <div>
+        <% if (globalMessage) { %>
+        <article class="message <%= globalMessageClass %>">
+          <div class="message-header">
+            <p>Notice</p>
+          </div>
+          <div class="message-body">
+            <%= globalMessage %>
+          </div>
+        </article>
+        <% } %>
         <div class="container">
           <div class="columns">
             <div class="column is-one-third">
