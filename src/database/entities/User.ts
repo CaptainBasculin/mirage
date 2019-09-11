@@ -45,6 +45,16 @@ export class User extends BaseEntity {
   @Column({
     default: false
   })
+  suspended: boolean
+
+  @Column({
+    default: ''
+  })
+  suspensionReason: string
+
+  @Column({
+    default: false
+  })
   longNames: boolean
 
   @OneToMany(type => Image, image => image.uploader)
@@ -71,7 +81,9 @@ export class User extends BaseEntity {
       invites: this.invites
         ? this.invites.map(invite => invite.serialize())
         : [],
-      urls: this.urls ? this.urls.map(url => url.userSerialize()) : []
+      urls: this.urls ? this.urls.map(url => url.userSerialize()) : [],
+      suspended: this.suspended,
+      suspensionReason: this.suspensionReason
     }
   }
 }
