@@ -3,6 +3,17 @@
   View all of the shortened URLs on the instance
 </h2>
 
+<% if (query.message) { %>
+<article class="message <%= query.class %>">
+  <div class="message-header">
+    <p>Message</p>
+  </div>
+  <div class="message-body">
+    <%= query.message %>
+  </div>
+</article>
+<% } %>
+
 <table class="table is-hoverable is-fullwidth is-striped">
   <thead>
     <tr>
@@ -12,6 +23,7 @@
       <th>Creation Date</th>
       <th>Creator</th>
       <th>Deleted</th>
+      <th>Delete</th>
     </tr>
   </thead>
   <tbody>
@@ -32,6 +44,26 @@
       </td>
       <td>
         <% if (url.deleted) { %><strong>Yes</strong> <% } else { %> No<% } %>
+      </td>
+      <td>
+        <div class="field is-grouped">
+          <p class="control">
+            <a
+              class="button is-warning"
+              href="/admin/urls/<%= url.id %>/delete?type=LEGAL"
+            >
+              Legal
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-danger"
+              href="/admin/urls/<%= url.id %>/delete?type=COPYRIGHT"
+            >
+              Copyright
+            </a>
+          </p>
+        </div>
       </td>
     </tr>
     <% }) %>

@@ -5,6 +5,7 @@ import { Invite } from '../database/entities/Invite'
 import { Image } from '../database/entities/Image'
 import { User } from '../database/entities/User'
 import { ShortenedUrl } from '../database/entities/ShortenedUrl'
+import { bucket } from '../utils/StorageUtil'
 const AdminRouter = express.Router()
 AdminRouter.use(
   bodyParser.urlencoded({
@@ -42,20 +43,80 @@ AdminRouter.route('/images').get(authMiddleware, async (req, res) => {
   })
   res.render('pages/admin/images', {
     layout: 'layouts/admin',
-    images: images.map(image => image.serialize()).reverse()
+    images: images.map(image => image.serialize()).reverse(),
+    query: req.query || {
+      message: false,
+      class: false
+    }
   })
 })
-
+AdminRouter.route('/images/:id/delete').get(
+  authMiddleware,
+  async (req, res) => {
+    let image = await Image.findOne({
+      where: {
+        id: req.params.id
+      },
+      relations: ['uploader']
+    })
+    if (!image) {
+      return res.redirect(
+        '/admin/images?message=Image does not exist&class=is-danger'
+      )
+    }
+    await bucket.file(image.path).delete()
+    image.deleted = true
+    image.deletionReason = req.query.type || 'LEGAL'
+    await image.save()
+    return res.redirect(
+      `${
+        (req.query.loc || 'admin') === 'admin'
+          ? '/admin/images'
+          : `/admin/users/${image.uploader.username}`
+      }?message=Image ${image.path} was deleted with reason ${
+        image.deletionReason
+      }&class=is-success`
+    )
+  }
+)
 AdminRouter.route('/urls').get(authMiddleware, async (req, res) => {
   let urls = await ShortenedUrl.find({
     relations: ['creator']
   })
   res.render('pages/admin/urls', {
     layout: 'layouts/admin',
-    urls: urls.map(url => url.serialize()).reverse()
+    urls: urls.map(url => url.serialize()).reverse(),
+    query: req.query || {
+      message: false,
+      class: false
+    }
   })
 })
-
+AdminRouter.route('/urls/:id/delete').get(authMiddleware, async (req, res) => {
+  let url = await ShortenedUrl.findOne({
+    where: {
+      id: req.params.id
+    },
+    relations: ['creator']
+  })
+  if (!url) {
+    return res.redirect(
+      '/admin/urls?message=Shortened URL does not exist&class=is-danger'
+    )
+  }
+  url.deleted = true
+  url.deletionReason = req.query.type || 'LEGAL'
+  await url.save()
+  return res.redirect(
+    `${
+      (req.query.loc || 'admin') === 'admin'
+        ? '/admin/urls'
+        : `/admin/users/${url.creator.username}`
+    }?message=URL ${url.shortId} was deleted with reason ${
+      url.deletionReason
+    }&class=is-success`
+  )
+})
 AdminRouter.route('/users').get(authMiddleware, async (req, res) => {
   let users = await User.find({
     relations: ['invites', 'images']

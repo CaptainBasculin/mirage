@@ -3,6 +3,17 @@
   View information on user <%= user.username %>
 </h2>
 
+<% if (query.message) { %>
+<article class="message <%= query.class %>">
+  <div class="message-header">
+    <p>Message</p>
+  </div>
+  <div class="message-body">
+    <%= query.message %>
+  </div>
+</article>
+<% } %>
+
 <h1 class="title">Images</h1>
 
 <table class="table is-hoverable is-fullwidth is-striped">
@@ -13,6 +24,7 @@
       <th>Upload Date</th>
       <th>Size</th>
       <th>Content Type</th>
+      <th>Delete</th>
     </tr>
   </thead>
   <tbody>
@@ -23,6 +35,26 @@
       <td><%= image.uploadDate %></td>
       <td><%= image.size %></td>
       <td><%= image.contentType %></td>
+      <td>
+        <div class="field is-grouped">
+          <p class="control">
+            <a
+              class="button is-warning"
+              href="/admin/images/<%= image.id %>/delete?type=LEGAL&loc=user"
+            >
+              Legal
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-danger"
+              href="/admin/images/<%= image.id %>/delete?type=COPYRIGHT&loc=user"
+            >
+              Copyright
+            </a>
+          </p>
+        </div>
+      </td>
     </tr>
     <% }) %>
   </tbody>
@@ -38,6 +70,7 @@
       <th>Host</th>
       <th>Creation Date</th>
       <th>Deleted</th>
+      <th>Delete</th>
     </tr>
   </thead>
   <tbody>
@@ -53,6 +86,26 @@
       <td><%= url.creationDate %></td>
       <td>
         <% if (url.deleted) { %><strong>Yes</strong> <% } else { %> No<% } %>
+      </td>
+      <td>
+        <div class="field is-grouped">
+          <p class="control">
+            <a
+              class="button is-warning"
+              href="/admin/urls/<%= url.id %>/delete?type=LEGAL&loc=user"
+            >
+              Legal
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-danger"
+              href="/admin/urls/<%= url.id %>/delete?type=COPYRIGHT&loc=user"
+            >
+              Copyright
+            </a>
+          </p>
+        </div>
       </td>
     </tr>
     <% }) %>
