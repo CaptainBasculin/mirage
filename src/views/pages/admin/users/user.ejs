@@ -3,7 +3,17 @@
   View information on user <%= user.username %>
 </h2>
 
-<% if (query.message) { %>
+<% if (user.suspended) { %>
+<article class="message <%= query.class %>">
+  <div class="message-header">
+    <p>User is Suspended</p>
+  </div>
+  <div class="message-body">
+    User is suspended for the following reason: <br />
+    <%= user.suspensionReason %>
+  </div>
+</article>
+<% } %> <% if (query.message) { %>
 <article class="message <%= query.class %>">
   <div class="message-header">
     <p>Message</p>
@@ -12,6 +22,31 @@
     <%= query.message %>
   </div>
 </article>
+<% } %>
+
+<h1 class="title">User Management</h1>
+<% if (!user.suspended) { %>
+<form method="POST" action="/admin/users/<%= user.username %>/suspend">
+  <h2 class="subtitle">Suspend</h2>
+  <div class="field">
+    <label class="label">Reason</label>
+    <input class="input" type="text" name="reason" />
+  </div>
+  <div class="field">
+    <p class="control">
+      <button class="button is-danger" type="submit">Suspend</button>
+    </p>
+  </div>
+</form>
+<% } else { %>
+<form method="POST" action="/admin/users/<%= user.username %>/unsuspend">
+  <h2 class="subtitle">Lift Suspension</h2>
+  <div class="field">
+    <p class="control">
+      <button class="button is-warning" type="submit">Lift Suspension</button>
+    </p>
+  </div>
+</form>
 <% } %>
 
 <h1 class="title">Images</h1>

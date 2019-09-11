@@ -6,6 +6,8 @@ import { Image } from '../database/entities/Image'
 import { User } from '../database/entities/User'
 import { ShortenedUrl } from '../database/entities/ShortenedUrl'
 import { bucket } from '../utils/StorageUtil'
+import sgMail from '@sendgrid/mail'
+
 const AdminRouter = express.Router()
 AdminRouter.use(
   bodyParser.urlencoded({
@@ -123,7 +125,11 @@ AdminRouter.route('/users').get(authMiddleware, async (req, res) => {
   })
   res.render('pages/admin/users/index', {
     layout: 'layouts/admin',
-    users: users.map(user => user.serialize())
+    users: users.map(user => user.serialize()),
+    query: req.query || {
+      message: false,
+      class: false
+    }
   })
 })
 
@@ -146,5 +152,61 @@ AdminRouter.route('/users/:id').get(authMiddleware, async (req, res) => {
     user: user!.serialize()
   })
 })
+
+AdminRouter.route('/users/:id/suspend').post(
+  authMiddleware,
+  async (req, res) => {
+    let user = await User.findOne({
+      where: {
+        username: req.params.id
+      },
+      relations: ['invites', 'images', 'urls']
+    })
+    if (!user) {
+      return res.status(404)
+    }
+    user.suspended = true
+    user.suspensionReason = req.body.reason
+    await user.save()
+    sgMail.setApiKey(process.env.EMAIL_KEY!)
+    await sgMail.send({
+      to: user.email,
+      from: process.env.EMAIL_FROM!,
+      subject: 'Mirage: your account was suspended',
+      html: `Hello, ${user.username}!<br/>Your account was suspended.<br/>You were suspended for the reason:<br/>${user.suspensionReason}<br/><br/><br/>Until your suspension is lifted, you may not do the following:<ul><li>Upload images</li><li>Create, use, or distribute invites</li><li>Create shortened URLs</li><li>Login to the account panel</li></ul>.<br/>Contact a staff member on the Discord if you would like to dispute this decision.`
+    })
+    return res.redirect(
+      `/admin/users/${user.username}?message=User was sucessfully suspended&type=is-success`
+    )
+  }
+)
+
+AdminRouter.route('/users/:id/unsuspend').post(
+  authMiddleware,
+  async (req, res) => {
+    let user = await User.findOne({
+      where: {
+        username: req.params.id
+      },
+      relations: ['invites', 'images', 'urls']
+    })
+    if (!user) {
+      return res.status(404)
+    }
+    user.suspended = false
+    user.suspensionReason = ''
+    await user.save()
+    sgMail.setApiKey(process.env.EMAIL_KEY!)
+    await sgMail.send({
+      to: user.email,
+      from: process.env.EMAIL_FROM!,
+      subject: 'Mirage: your suspension was lifted',
+      html: `Hello, ${user.username}!<br/>Your account's suspension was lifted.<br/>You now have any privileges you had before your account was suspended.<br/>If any of your images were unavailable while you were suspended, you now have access to view them.<br/>We are sorry for the inconvenience.`
+    })
+    return res.redirect(
+      `/admin/users/${user.username}?message=User was sucessfully unsuspended&type=is-success`
+    )
+  }
+)
 
 export default AdminRouter
