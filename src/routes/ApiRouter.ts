@@ -162,6 +162,13 @@ ApiRouter.route(['/image/:file', '/image/*/:file']).get(async (req, res) => {
       .contentType('image/png')
       .send(buf)
   }
+
+  if (image && image.uploader.suspended) {
+    let [_file] = await bucket.file(`/meta/image-suspended.png`).get()
+    let buf = await rb(_file.createReadStream())
+    return res.contentType('image/png').send(buf)
+  }
+
   let file = null
 
   let mimeType = image ? image.contentType : 'image/png'
