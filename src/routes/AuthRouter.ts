@@ -5,6 +5,7 @@ import bodyParser from 'body-parser'
 import { randomUserId, randomKey } from '../utils/RandomUtil'
 import sgMail from '@sendgrid/mail'
 import { Invite } from '../database/entities/Invite'
+import { userCreated } from '../bot'
 const AuthRouter = express.Router()
 
 AuthRouter.use(
@@ -170,7 +171,7 @@ AuthRouter.route('/register')
       subject: 'Mirage: confirm your email',
       html: `Hello, ${user.username}!<br/>Someone signed up for an account with your email address (hopefully you!)<br/>Please confirm your email by pressing the link below.<br/><a href="${process.env.BASE_URL}/auth/confirm_email?key=${user.emailVerificationToken}">${process.env.BASE_URL}/auth/confirm_email?key=${user.emailVerificationToken}</a>`
     })
-
+    userCreated(user)
     res.render('pages/auth/register_success')
   })
 
