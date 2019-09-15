@@ -5,7 +5,7 @@ import bodyParser from 'body-parser'
 import { randomUserId, randomKey } from '../utils/RandomUtil'
 import sgMail from '@sendgrid/mail'
 import { Invite } from '../database/entities/Invite'
-import { userCreated } from '../bot'
+import { userCreated, userLogin } from '../bot'
 const AuthRouter = express.Router()
 
 AuthRouter.use(
@@ -73,6 +73,8 @@ AuthRouter.route('/login')
 
     req.session!.user = user.id
     req.session!.loggedIn = true
+    req.session!.ip = req.ip
+    userLogin(user, req.ip, req.headers['user-agent'] || '')
     res.redirect('/')
   })
 

@@ -1,6 +1,7 @@
 import Discord, { TextChannel } from 'discord.js'
 import { User } from '../database/entities/User'
 import { Invite } from '../database/entities/Invite'
+import useragent from 'useragent'
 
 const client = new Discord.Client({
   fetchAllMembers: true
@@ -67,4 +68,29 @@ export async function linkUser(user: User, newId: string) {
     .addField('Discord', `<@${newId}>`)
     .addField('Discord ID', newId)
   await logChannel.send(embed)
+}
+
+export async function userLogin(user: User, ip: string, userAgent: string) {
+  if (user.discord === null) {
+    return
+  }
+
+  let discordUser = logChannel.guild.members.get(user.discord)
+  if (!discordUser) {
+    return
+  }
+
+  let ua = useragent.parse(userAgent)
+
+  let embed = new Discord.RichEmbed()
+    .setTitle('User Login')
+    .setColor('#f59f00')
+    .setTimestamp()
+    .setDescription('Your Mirage account was logged into')
+    .setTimestamp()
+    .addField('IP Address', ip)
+    .addField('Browser', ua.toAgent())
+    .addField('Device', ua.device.toString())
+    .addField('OS', ua.os.toString())
+  discordUser.send(embed)
 }
