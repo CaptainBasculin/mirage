@@ -83,7 +83,7 @@ app.use(async (req, res, next) => {
     }
   }
 
-  if (req.loggedIn) {
+  if (req.session && req.session!.loggedIn) {
     if (req.session!.ip !== req.ip) {
       res.locals.profile = undefined
       res.locals.loggedIn = false
