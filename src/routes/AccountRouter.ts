@@ -75,6 +75,16 @@ AccountRouter.route('/urlshortener')
     return res.send(JSON.stringify(cfg))
   })
 
+AccountRouter.route('/discord').get((req, res) => {
+  res.render('pages/account/discord', {
+    layout: 'layouts/account',
+    query: req.query || {
+      message: false,
+      class: false
+    }
+  })
+})
+
 AccountRouter.route('/sharex')
   .get((req, res) => {
     res.render('pages/account/sharex', {

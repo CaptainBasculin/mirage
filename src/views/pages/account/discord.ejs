@@ -1,0 +1,16 @@
+<h1 class="title">Discord</h1>
+<h2 class="subtitle">Link your Discord to your Mirage account</h2>
+
+<% if (profile.discord !== null) { %>
+<article class="message is-warning">
+  <div class="message-header">
+    <p>Warning</p>
+  </div>
+  <div class="message-body">
+    You already have a Discord linked to your account, continuing will unlink it
+    and remove all roles from the Discord.
+  </div>
+</article>
+<% } %>
+
+<a class="button is-primary" href="/oauth/discord/login">Link</a>

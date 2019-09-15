@@ -16,6 +16,8 @@ import AdminRouter from './routes/AdminRouter'
 import Cache from './utils/CacheUtil'
 import { Image } from './database/entities/Image'
 import { ShortenedUrl } from './database/entities/ShortenedUrl'
+import { botLogin } from './bot'
+import OAuthRouter from './routes/OAuthRouter'
 dotenv.config()
 
 const RedisStore = _RedisStore(session)
@@ -29,6 +31,8 @@ app.set('layout', 'layouts/layout')
 app.set('layout extractScripts', true)
 app.set('layout extractStyles', true)
 app.set('layout extractMetas', true)
+
+app.enable('trust proxy')
 
 app.use(
   session({
@@ -112,6 +116,7 @@ app.use('/account', AccountRouter)
 app.use('/legal', LegalRouter)
 app.use('/api', ApiRouter)
 app.use('/admin', AdminRouter)
+app.use('/oauth', OAuthRouter)
 
 async function getIndexLocals(): Promise<{
   users: number
@@ -150,6 +155,10 @@ app.get('/discord', (req, res) => {
   res.redirect('https://discord.gg/xTs2HbC')
 })
 
+app.get('/contact', (req, res) => {
+  res.render('pages/contact')
+})
+
 createConnection({
   type: 'postgres',
   host: process.env.TYPEORM_HOST,
@@ -165,6 +174,8 @@ createConnection({
   .then(() => {
     app.listen(process.env.PORT, () => {
       console.log('listening on port', process.env.PORT)
+
+      botLogin()
     })
   })
   .catch(err => {

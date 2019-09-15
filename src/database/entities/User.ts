@@ -66,6 +66,11 @@ export class User extends BaseEntity {
   @OneToMany(type => ShortenedUrl, url => url.creator)
   urls: ShortenedUrl[]
 
+  @Column({
+    nullable: true
+  })
+  discord: string
+
   serialize() {
     return {
       id: this.id,
@@ -83,7 +88,8 @@ export class User extends BaseEntity {
         : [],
       urls: this.urls ? this.urls.map(url => url.userSerialize()) : [],
       suspended: this.suspended,
-      suspensionReason: this.suspensionReason
+      suspensionReason: this.suspensionReason,
+      discord: this.discord
     }
   }
 }
