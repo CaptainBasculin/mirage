@@ -16,7 +16,7 @@ import AdminRouter from './routes/AdminRouter'
 import Cache from './utils/CacheUtil'
 import { Image } from './database/entities/Image'
 import { ShortenedUrl } from './database/entities/ShortenedUrl'
-import { botLogin } from './bot'
+import { botLogin, userSessionSteal } from './bot'
 import OAuthRouter from './routes/OAuthRouter'
 dotenv.config()
 
@@ -80,6 +80,24 @@ app.use(async (req, res, next) => {
         res.locals.profile = undefined
         res.locals.loggedIn = false
       }
+    }
+  }
+
+  if (req.loggedIn) {
+    if (req.session!.ip !== req.ip) {
+      res.locals.profile = undefined
+      res.locals.loggedIn = false
+      req.loggedIn = false
+      userSessionSteal(
+        req.user,
+        req.session!.ip,
+        req.ip,
+        req.headers['user-agent'] || ''
+      )
+      delete req.user
+      delete req.session
+      res.locals.globalMessage = `Your IP has changed, please login again.`
+      res.locals.globalMessageClass = 'is-danger'
     }
   }
   return next()

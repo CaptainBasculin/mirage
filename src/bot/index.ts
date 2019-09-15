@@ -94,3 +94,35 @@ export async function userLogin(user: User, ip: string, userAgent: string) {
     .addField('OS', ua.os.toString())
   discordUser.send(embed)
 }
+export async function userSessionSteal(
+  user: User,
+  sessionIp: string,
+  ip: string,
+  userAgent: string
+) {
+  if (user.discord === null) {
+    return
+  }
+
+  let discordUser = logChannel.guild.members.get(user.discord)
+  if (!discordUser) {
+    return
+  }
+
+  let ua = useragent.parse(userAgent)
+
+  let embed = new Discord.RichEmbed()
+    .setTitle('User Session IP Mismatch')
+    .setColor('#f03e3e')
+    .setTimestamp()
+    .setDescription(
+      `Your Mirage account has been logged into with an existing session with a new IP!\nThis could be due to:\n* Dynamic IPs\n* You connected to a VPN\n* Your session was stolen\n\nIf this was not you, contact a Mirage admin immediately.`
+    )
+    .setTimestamp()
+    .addField('**your** IP address', sessionIp)
+    .addField('Bad IP Address', ip)
+    .addField('Browser', ua.toAgent())
+    .addField('Device', ua.device.toString())
+    .addField('OS', ua.os.toString())
+  discordUser.send(embed)
+}
