@@ -1,4 +1,5 @@
-import express from 'express'
+import express, { Request, Response } from 'express'
+import { NextFunction } from 'connect'
 import { Invite } from '../database/entities/Invite'
 import { randomUserId, randomKey } from '../utils/RandomUtil'
 import randomstring from 'randomstring'
