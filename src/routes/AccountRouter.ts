@@ -35,6 +35,14 @@ const BaseUrlShortener = {
     host: ''
   }
 }
+function authMiddleware(req: Request, res: Response, next: NextFunction) {
+  if (!req.user) {
+    return res.redirect('/auth/login')
+  }
+
+  return next()
+}
+AccountRouter.use(authMiddleware)
 AccountRouter.route('/').get((req, res) => {
   res.render('pages/account/index', {
     layout: 'layouts/account'
