@@ -57,13 +57,32 @@ export class User extends BaseEntity {
   })
   longNames: boolean
 
-  @OneToMany(type => Image, image => image.uploader)
+  @Column({
+    default: false
+  })
+  inviteCreator: boolean
+
+  @Column({
+    default: 0
+  })
+  availableInvites: number
+
+  @OneToMany(
+    type => Image,
+    image => image.uploader
+  )
   images: Image[]
 
-  @OneToMany(type => Invite, invite => invite.creator)
+  @OneToMany(
+    type => Invite,
+    invite => invite.creator
+  )
   invites: Invite[]
 
-  @OneToMany(type => ShortenedUrl, url => url.creator)
+  @OneToMany(
+    type => ShortenedUrl,
+    url => url.creator
+  )
   urls: ShortenedUrl[]
 
   @Column({
@@ -89,7 +108,9 @@ export class User extends BaseEntity {
       urls: this.urls ? this.urls.map(url => url.userSerialize()) : [],
       suspended: this.suspended,
       suspensionReason: this.suspensionReason,
-      discord: this.discord
+      discord: this.discord,
+      inviteCreator: this.inviteCreator,
+      availableInvites: this.availableInvites
     }
   }
 }

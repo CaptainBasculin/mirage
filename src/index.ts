@@ -50,11 +50,21 @@ app.use(
 
 app.use(async (req, res, next) => {
   if (req.session!.loggedIn) {
+    let relations: string[] = [] // ['images', 'invites', 'urls']
+    if (req.url.includes('/account/images')) {
+      relations.push('images')
+    }
+    if (req.url.includes('/account/invites')) {
+      relations.push('invites')
+    }
+    if (req.url.includes('/account/urls')) {
+      relations.push('urls')
+    }
     let user = await User.findOne({
       where: {
         id: req.session!.user
       },
-      relations: ['images', 'invites', 'urls']
+      relations
     })
     if (!user) return next()
     req.user = user
@@ -94,8 +104,8 @@ app.use(async (req, res, next) => {
         req.ip,
         req.headers['user-agent'] || ''
       )
-      delete req.user
-      delete req.session
+      req.session.loggedIn = false
+
       res.locals.globalMessage = `Your IP has changed, please login again.`
       res.locals.globalMessageClass = 'is-danger'
     }

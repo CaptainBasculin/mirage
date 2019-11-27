@@ -36,8 +36,23 @@ AdminRouter.route('/invites').get(authMiddleware, async (req, res) => {
   })
   res.render('pages/admin/invites', {
     layout: 'layouts/admin',
-    invites: invites.map(invite => invite.adminSerialize()).reverse()
+    invites: invites.map(invite => invite.adminSerialize()).reverse(),
+    query: req.query || {
+      message: false,
+      class: false
+    }
   })
+})
+AdminRouter.route('/invites/wave').get(authMiddleware, async (req, res) => {
+  let users = await User.find({})
+  users.forEach(user => {
+    user.availableInvites = user.availableInvites || 0
+    user.availableInvites = user.availableInvites + 1
+    user.save()
+  })
+  return res.redirect(
+    '/admin/invites?message=Invite wave was started&class=is-success'
+  )
 })
 AdminRouter.route('/images').get(authMiddleware, async (req, res) => {
   let images = await Image.find({
@@ -152,6 +167,56 @@ AdminRouter.route('/users/:id').get(authMiddleware, async (req, res) => {
     }
   })
 })
+
+AdminRouter.route('/users/:id/grant_invite').get(
+  authMiddleware,
+  async (req, res) => {
+    let user = await User.findOne({
+      where: {
+        username: req.params.id
+      },
+      relations: ['invites', 'images', 'urls']
+    })
+    if (!user) {
+      return res.status(404)
+    }
+    user.availableInvites = (user.availableInvites || 0) + 1
+    await user.save()
+    sgMail.setApiKey(process.env.EMAIL_KEY!)
+    await sgMail.send({
+      to: user.email,
+      from: process.env.EMAIL_FROM!,
+      subject: 'Mirage: you were granted an invite by an administrator',
+      html: `Hello, ${user.username}!<br/>Congratulations, you have been granted an invite by an administrator.<br/>Your new available invitation count is: <strong>${user.availableInvites}</strong>`
+    })
+    return res.redirect(
+      `/admin/users/${user.username}?message=User was granted an invite&class=is-success`
+    )
+  }
+)
+
+AdminRouter.route('/users/:id/remove_invite').get(
+  authMiddleware,
+  async (req, res) => {
+    let user = await User.findOne({
+      where: {
+        username: req.params.id
+      },
+      relations: ['invites', 'images', 'urls']
+    })
+    if (!user) {
+      return res.status(404)
+    }
+    user.availableInvites = (user.availableInvites || 0) - 1
+    if (user.availableInvites < 1) {
+      user.availableInvites = 0
+    }
+    await user.save()
+    return res.redirect(
+      `/admin/users/${user.username}?message=User's invite was removed&class=is-success`
+    )
+  }
+)
 
 AdminRouter.route('/users/:id/suspend').post(
   authMiddleware,

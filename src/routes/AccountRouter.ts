@@ -123,8 +123,17 @@ AccountRouter.route('/invites').get((req, res) => {
   })
 })
 AccountRouter.route('/invites/create').post(async (req, res) => {
-  if (!req.user.admin) {
+  if (
+    !req.user.admin ||
+    !req.user.moderator ||
+    !req.user.inviteCreator ||
+    (req.user.availableInvites || 0) < 1
+  ) {
     return res.redirect('/account/invites')
+  }
+  if (!req.user.admin || !req.user.moderator || !req.user.inviteCreator) {
+    req.user.availableInvites = req.user.availableInvites - 1
+    await req.user.save()
   }
   let invite = new Invite()
   invite.id = randomUserId()

@@ -3,7 +3,18 @@
   View all the invites you have created, or create new ones
 </h2>
 
-<% if (profile.admin) { %>
+<% if ((profile.availableInvites || 0) > 0) { %>
+<p class="content">
+  You have <strong><%= profile.availableInvites %></strong> invites left to
+  create.
+</p>
+<% } else { %>
+<p class="content">
+  You cannot create any invites at this time, contact an admin to request an
+  invite.
+</p>
+<% } %> <% if (profile.admin || profile.moderator || !profile.inviteCreator ||
+(profile.availableInvites || 0) < 1) { %>
 <form action="/account/invites/create" method="POST">
   <button class="button is-primary" type="submit">Create Invite</button>
 </form>
