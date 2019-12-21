@@ -53,7 +53,7 @@
 
 <div class="content">
   <p>
-    Can create invites:
+    Can <em>freely</em> create invites:
     <strong
       class="has-text-<%= (user.inviteCreator || user.admin || user.moderator) ? 'success' : 'danger' %>"
     >
@@ -62,11 +62,23 @@
   </p>
   <p>Available invites: <strong><%= user.availableInvites || 0 %></strong></p>
 </div>
-<a class="button is-success" href="/admin/users/<%= user.id %>/grant_invite">
+<a
+  class="button is-success"
+  href="/admin/users/<%= user.username %>/grant_invite"
+>
   Grant Invite
 </a>
-<a class="button is-danger" href="/admin/users/<%= user.id %>/remove_item">
+<a
+  class="button is-danger"
+  href="/admin/users/<%= user.username %>/remove_item"
+>
   Remove Invite
+</a>
+<a
+  class="button is-warning"
+  href="/admin/users/<%= user.username %>/toggle_creator"
+>
+  Toggle invite creator
 </a>
 <br />
 

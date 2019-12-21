@@ -218,6 +218,27 @@ AdminRouter.route('/users/:id/remove_invite').get(
   }
 )
 
+AdminRouter.route('/users/:id/toggle_creator').get(
+  authMiddleware,
+  async (req, res) => {
+    let user = await User.findOne({
+      where: {
+        username: req.params.id
+      },
+      relations: ['invites', 'images', 'urls']
+    })
+    if (!user) {
+      return res.status(404)
+    }
+    user.inviteCreator = !user.inviteCreator
+
+    await user.save()
+    return res.redirect(
+      `/admin/users/${user.username}?message=User's invite creator status is now: ${user.inviteCreator}&class=is-success`
+    )
+  }
+)
+
 AdminRouter.route('/users/:id/suspend').post(
   authMiddleware,
   async (req, res) => {
