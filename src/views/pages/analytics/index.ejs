@@ -1,0 +1,155 @@
+<div class="content">
+  <h1>Analytics</h1>
+
+  <h2>Images uploaded (daily, last 30 days)</h2>
+  <div style="height: 400px;">
+    <canvas
+      id="images-daily"
+      width="auto"
+      height="400"
+      style="height: 400px;"
+    ></canvas>
+  </div>
+
+  <h2>Most used hosts</h2>
+  <div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Pos</th>
+          <th>Domain</th>
+          <th>Usage</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+</div>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"
+  integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ="
+  crossorigin="anonymous"
+></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"
+  integrity="sha256-TQq84xX6vkwR0Qs1qH5ADkP+MvH0W+9E7TdHJsoIQiM="
+  crossorigin="anonymous"
+></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/psl/1.6.0/psl.min.js"></script>
+<script>
+  const users = JSON.parse('<%- usersJSON %>')
+  const images = JSON.parse('<%- imagesJSON %>').map(image => {
+    image.uploadDate = moment(image.uploadDate)
+    return image
+  })
+  window.chartColors = {
+    red: 'rgb(255, 99, 132)',
+    orange: 'rgb(255, 159, 64)',
+    yellow: 'rgb(255, 205, 86)',
+    green: 'rgb(75, 192, 192)',
+    blue: 'rgb(54, 162, 235)',
+    purple: 'rgb(153, 102, 255)',
+    grey: 'rgb(201, 203, 207)'
+  }
+
+  const now = moment()
+</script>
+<script>
+  // images-daily
+  const thirtyDaysAgo = moment().subtract(30, 'days')
+  const filtered = images.filter(img => img.uploadDate.isAfter(thirtyDaysAgo))
+
+  const obj = {}
+  const format = 'MMMM Do, YYYY'
+  // allows for days without any uploads :(
+  for (let i = 30; i >= 0; i--) {
+    let newTime = moment().subtract(i, 'day')
+    obj[newTime.format(format)] = []
+  }
+  //
+  filtered.forEach(img => {
+    let ts = img.uploadDate.format(format)
+    obj[ts].push(img)
+  })
+
+  let data = []
+  let i = 0
+  Object.values(obj).forEach(arr => {
+    data.push({
+      x: i,
+      y: arr.length
+    })
+    i++
+  })
+  let color = Chart.helpers.color
+  const chartConfig = {
+    type: 'line',
+    data: {
+      labels: Object.keys(obj),
+      datasets: [
+        {
+          label: 'Images',
+          backgroundColor: color(window.chartColors.red)
+            .alpha(0.5)
+            .rgbString(),
+          borderColor: window.chartColors.red,
+          fill: false,
+          data
+        }
+      ]
+    },
+    options: {
+      title: {
+        text: 'title'
+      },
+      scales: {
+        yAxes: [
+          {
+            scaleLabel: {
+              display: true,
+              labelString: 'value'
+            }
+          }
+        ]
+      },
+      maintainAspectRatio: false
+    }
+  }
+  window.onload = () => {
+    let ctx = document.getElementById('images-daily').getContext('2d')
+    window.imagesDaily = new Chart(ctx, chartConfig)
+  }
+</script>
+<script>
+  // domains
+  let domains = {}
+  images.forEach(img => {
+    let parsed = psl.parse(img.host)
+    if (!domains[parsed.domain]) {
+      domains[parsed.domain] = 0
+    }
+    domains[parsed.domain]++
+  })
+  let sortable = []
+  for (let domain in domains) {
+    sortable.push([domain, domains[domain]])
+  }
+  sortable.sort((a, b) => {
+    return b[1] - a[1]
+  })
+
+  let tbody = document.getElementById('table-body')
+  sortable.forEach((arr, idx) => {
+    let domain = arr[0]
+    let usage = arr[1]
+    let tr = document.createElement('tr')
+    let td1 = document.createElement('td')
+    let td2 = document.createElement('td')
+    let td3 = document.createElement('td')
+    td1.innerHTML = `<strong>${(idx + 1).toString()}</strong>`
+    td2.innerText = domain
+    td3.innerText = usage.toString()
+    tr.append(td1, td2, td3)
+    tbody.append(tr)
+  })
+</script>

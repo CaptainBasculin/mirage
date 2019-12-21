@@ -45,7 +45,11 @@
             <a class="button is-link" href="/account">
               Manage Account
             </a>
-            <% if (profile.admin) { %>
+            <% if (profile.moderator || profile.admin) { %>
+            <a class="button is-link" href="/moderator">
+              Mod Panel
+            </a>
+            <% } %> <% if (profile.admin) { %>
             <a class="button is-warning" href="/admin">
               Admin Panel
             </a>

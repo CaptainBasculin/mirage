@@ -13,11 +13,13 @@ import ms from 'ms'
 import AccountRouter from './routes/AccountRouter'
 import ApiRouter from './routes/ApiRouter'
 import AdminRouter from './routes/AdminRouter'
+import ModeratorRouter from './routes/ModeratorRouter'
 import Cache from './utils/CacheUtil'
 import { Image } from './database/entities/Image'
 import { ShortenedUrl } from './database/entities/ShortenedUrl'
 import { botLogin, userSessionSteal } from './bot'
 import OAuthRouter from './routes/OAuthRouter'
+import AnalyticsRouter from './routes/AnalyticsRouter'
 dotenv.config()
 
 const RedisStore = _RedisStore(session)
@@ -144,6 +146,8 @@ app.use('/account', AccountRouter)
 app.use('/legal', LegalRouter)
 app.use('/api', ApiRouter)
 app.use('/admin', AdminRouter)
+app.use('/moderator', ModeratorRouter)
+app.use('/analytics', AnalyticsRouter)
 app.use('/oauth', OAuthRouter)
 
 async function getIndexLocals(): Promise<{

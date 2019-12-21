@@ -134,6 +134,7 @@ AdminRouter.route('/urls/:id/delete').get(authMiddleware, async (req, res) => {
     }&class=is-success`
   )
 })
+
 AdminRouter.route('/users').get(authMiddleware, async (req, res) => {
   let users = await User.find({
     relations: ['invites', 'images']

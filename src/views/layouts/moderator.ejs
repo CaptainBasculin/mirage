@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <%- meta %> <% include ../includes/styles %>
+    <title>Mirage</title>
+  </head>
+  <body>
+    <div class="content-main">
+      <% include ../includes/navbar %>
+      <div>
+        <% if (globalMessage) { %>
+        <article class="message <%= globalMessageClass %>">
+          <div class="message-header">
+            <p>Notice</p>
+          </div>
+          <div class="message-body">
+            <%= globalMessage %>
+          </div>
+        </article>
+        <% } %>
+        <div class="container">
+          <div class="columns">
+            <div class="column is-one-third">
+              <aside class="menu">
+                <p class="menu-label">
+                  Moderator
+                </p>
+                <ul class="menu-list">
+                  <li>
+                    <a
+                      href="/moderator"
+                      class="<%= originalUrlEq('/moderator') %>"
+                    >
+                      Dashboard
+                    </a>
+                  </li>
+                </ul>
+              </aside>
+            </div>
+            <div class="column table-container">
+              <%- body %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="flex-grow: 1"></div>
+      <% include ../includes/footer %>
+    </div>
+    <% include ../includes/scripts %>
+  </body>
+</html>

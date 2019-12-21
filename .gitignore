@@ -150,3 +150,5 @@ $RECYCLE.BIN/
 
 dist/
 docker-compose.yml
+
+test.js
