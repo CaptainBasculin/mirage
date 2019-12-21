@@ -38,24 +38,58 @@
       <div class="navbar-end">
         <div class="navbar-item">
           <% if (loggedIn) { %>
-          <span class="navbar-item">
-            Welcome, <%= profile.username %>
-          </span>
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link" href="/account">
+              <span class="icon">
+                <i class="fas fa-user-circle" aria-hidden="true"></i>
+              </span>
+              <span><%= profile.username %></span>
+            </a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="/account">
+                <span class="icon">
+                  <i class="fas fa-user-circle" aria-hidden="true"></i>
+                </span>
+                <span>Manage Account</span>
+              </a>
+              <% if (profile.moderator || profile.admin) { %>
+              <a class="navbar-item" href="/moderator">
+                <span class="icon">
+                  <i class="fas fa-life-ring" aria-hidden="true"></i>
+                </span>
+                <span>Mod Panel</span>
+              </a>
+              <% } %> <% if (profile.admin) { %>
+              <a class="navbar-item" href="/admin">
+                <span class="icon">
+                  <i class="fas fa-user-shield" aria-hidden="true"></i>
+                </span>
+                <span>Admin Panel</span>
+              </a>
+              <a class="navbar-item" href="/analytics">
+                <span class="icon">
+                  <i class="fas fa-chart-line" aria-hidden="true"></i>
+                </span>
+                <span>Analytics</span>
+              </a>
+              <% } %>
+
+              <a class="navbar-item" href="/auth/logout">
+                <span class="icon">
+                  <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                </span>
+                <span>Sign Out</span>
+              </a>
+            </div>
+          </div>
+
+          <span class="navbar-item"> </span>
           <div class="buttons">
-            <a class="button is-link" href="/account">
-              Manage Account
-            </a>
-            <% if (profile.moderator || profile.admin) { %>
-            <a class="button is-link" href="/moderator">
-              Mod Panel
-            </a>
-            <% } %> <% if (profile.admin) { %>
-            <a class="button is-warning" href="/admin">
-              Admin Panel
-            </a>
-            <% } %>
             <a class="button is-danger" href="/auth/logout">
-              Sign Out
+              <span class="icon">
+                <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+              </span>
+              <span>Sign Out</span>
             </a>
           </div>
           <% } else { %>
