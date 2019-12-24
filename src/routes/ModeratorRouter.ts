@@ -30,4 +30,11 @@ ModeratorRouter.route('/').get((req, res) => {
   })
 })
 
+ModeratorRouter.route('/image').get((req, res) => {
+  res.render('pages/moderator/lookup', {
+    layout: 'layouts/moderator'
+  })
+})
+
+
 export default ModeratorRouter

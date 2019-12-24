@@ -101,6 +101,10 @@ AuthRouter.route('/register')
     if (!req.body.invite && !process.env.INVITES_DISABLED) {
       errors.invite = 'Please specify an invitation code'
     }
+    if (!req.body.username.match(/^\w+$/i)) {
+      errors.username =
+        'Please specify a valid username (you may only use alphanumeric characters)'
+    }
     let [_, usernames] = await User.findAndCount({
       where: {
         username: req.body.username
