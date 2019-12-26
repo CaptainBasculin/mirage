@@ -22,7 +22,9 @@ import { botLogin, userSessionSteal } from './bot'
 import OAuthRouter from './routes/OAuthRouter'
 import AnalyticsRouter from './routes/AnalyticsRouter'
 import * as Sentry from '@sentry/node'
-import { RewriteFrames } from '@sentry/integrations'
+import morgan from 'morgan'
+import Logger from 'logdna'
+import * as os from 'os'
 dotenv.config()
 
 // This allows TypeScript to detect our global value
@@ -38,21 +40,29 @@ global.__rootdir__ = __dirname || process.cwd()
 
 if (!!process.env.SENTRY_DSN) {
   Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    integrations: [
-      new RewriteFrames({
-        root: global.__rootdir__
-      })
-    ]
+    dsn: process.env.SENTRY_DSN
   })
 }
-
+const logger = Logger.createLogger(process.env.LOGDNA_INGESTION_KEY!, {
+  hostname: os.hostname()
+})
 const RedisStore = _RedisStore(session)
 
 const app = express()
 
-app.use(Sentry.Handlers.requestHandler())
+const stream = {
+  write: (message: any) => {
+    console.log(message)
+    logger.info(message)
+  }
+}
 
+app.use(Sentry.Handlers.requestHandler())
+app.use(
+  morgan('combined', {
+    stream
+  })
+)
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
 app.use(expressEjsLayouts)
