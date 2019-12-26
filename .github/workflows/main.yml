@@ -4,10 +4,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Publish Docker
-      uses: elgohr/Publish-Docker-Github-Action@2.11
+    - uses: actions/checkout@master
+    - name: Publish Docker Action
+      uses: jerray/publish-docker-action@v1.0.3
       with:
-        name: relative/mirage/server
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         registry: docker.pkg.github.com
+        repository: relative/mirage/server
+        auto_tag: true
+        allow_pull_request: false
