@@ -1,4 +1,5 @@
-import express from 'express'
+import express, { Request, Response } from 'express'
+import { NextFunction } from 'connect'
 import dotenv from 'dotenv'
 import path from 'path'
 import { createConnection } from 'typeorm'
@@ -20,11 +21,37 @@ import { ShortenedUrl } from './database/entities/ShortenedUrl'
 import { botLogin, userSessionSteal } from './bot'
 import OAuthRouter from './routes/OAuthRouter'
 import AnalyticsRouter from './routes/AnalyticsRouter'
+import * as Sentry from '@sentry/node'
+import { RewriteFrames } from '@sentry/integrations'
 dotenv.config()
+
+// This allows TypeScript to detect our global value
+declare global {
+  namespace NodeJS {
+    interface Global {
+      __rootdir__: string
+    }
+  }
+}
+
+global.__rootdir__ = __dirname || process.cwd()
+
+if (!!process.env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    integrations: [
+      new RewriteFrames({
+        root: global.__rootdir__
+      })
+    ]
+  })
+}
 
 const RedisStore = _RedisStore(session)
 
 const app = express()
+
+app.use(Sentry.Handlers.requestHandler())
 
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
@@ -189,6 +216,25 @@ app.get('/discord', (req, res) => {
 
 app.get('/contact', (req, res) => {
   res.render('pages/contact')
+})
+
+app.get('/error', (req, res) => {
+  throw new Error('Test exception')
+})
+
+app.use((req, res) => {
+  return res.render('pages/errors/404', {
+    layout: 'layouts/layout'
+  })
+})
+
+app.use(Sentry.Handlers.errorHandler())
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  return res.render('pages/errors/500', {
+    layout: 'layouts/layout',
+    sentry: (res as any).sentry
+  })
 })
 
 createConnection({
