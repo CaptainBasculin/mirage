@@ -210,8 +210,14 @@ ApiRouter.route(['/image/:file', '/image/*/:file']).get(async (req, res) => {
       }
     }
   } else {
-    let [_file] = await bucket.file(req.params.file).get()
-    file = _file
+    try {
+      let [_file] = await bucket.file(req.params.file).get()
+      file = _file
+    } catch (err) {
+      return res.send(
+        'error occurred while pulling the image from the storage server'
+      )
+    }
   }
 
   let buf = await rb(file.createReadStream())
