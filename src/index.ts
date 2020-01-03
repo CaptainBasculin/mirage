@@ -241,6 +241,10 @@ app.use((req, res) => {
 app.use(Sentry.Handlers.errorHandler())
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error('Sent error to sentry', err)
+  if ((err as any).field) {
+    console.error((err as any).field)
+  }
   return res.render('pages/errors/500', {
     layout: 'layouts/layout',
     sentry: (res as any).sentry

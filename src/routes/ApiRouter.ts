@@ -8,6 +8,7 @@ import { randomImageId, randomUserId } from '../utils/RandomUtil'
 import { Image } from '../database/entities/Image'
 import mime from 'mime-types'
 import rb from 'raw-body'
+import path from 'path'
 import { ShortenedUrl } from '../database/entities/ShortenedUrl'
 const ApiRouter = express.Router()
 
@@ -32,7 +33,10 @@ async function uploadImage(
   image.id = randomUserId()
   image.shortId = randomId
   image.host = host
-  image.path = `${randomId}.${mime.extension(file.mimetype)}`
+  // get extension
+  let ext = path.extname(file.originalname)
+  //image.path = `${randomId}.${mime.extension(file.mimetype)}`
+  image.path = `${randomId}${ext}`
   image.size = file.size
   image.uploadDate = new Date()
   image.url = `https://${host}/${image.path}`
@@ -68,10 +72,35 @@ ApiRouter.route('/upload').post(upload.single('file'), async (req, res) => {
   )
   return res.send(image.url)
 })
+ApiRouter.route('/upload/shortcuts/:host/:key').post(
+  upload.single('file'),
+  async (req, res) => {
+    let key = req.params.key
+    let user = await User.findOne({
+      where: {
+        uploadKey: key
+      }
+    })
+    if (!user) {
+      return res.status(401).send('Upload key is invalid')
+    }
+    if (user.suspended) {
+      return res
+        .status(401)
+        .send('User is suspended, check email for more information')
+    }
+    let image = await uploadImage(
+      req.params.host || req.hostname || 'mirage.re',
+      user,
+      req.file
+    )
+    return res.send(image.url)
+  }
+)
 ApiRouter.route('/upload/pomf/:key').post(
   upload.single('file[]'),
   async (req, res) => {
-    let key = req.body.key
+    let key = req.params.key
     let user = await User.findOne({
       where: {
         uploadKey: key
