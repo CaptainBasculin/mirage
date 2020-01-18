@@ -1,0 +1,71 @@
+<div class="content">
+  <h1>Image <code><%= image.shortId %></code></h1>
+  <p>
+    <label class="label">Snowflake</label>
+    <code><%= image.id %></code>
+  </p>
+  <p>
+    <label class="label">Path</label>
+    <a href="https://<%= image.host %>/<%= image.path %>">
+      https://<%= image.host %>/<%= image.path %>
+    </a>
+  </p>
+  <p>
+    <label class="label">Content Type</label>
+    <code><%= image.contentType %></code>
+  </p>
+  <p>
+    <label class="label">Hash (SHA-1)</label>
+    <code><%= image.hash %></code>
+  </p>
+  <p>
+    <label class="label">Size</label>
+    <span><%= image.size %> bytes</span>
+  </p>
+  <p>
+    <label class="label">Uploader</label>
+    <a href="/moderator/user/<%= image.uploader.username %>">
+      <%= image.uploader.username %>
+    </a>
+    <code><%= image.uploader.id %></code>
+  </p>
+  <p>
+    <label class="label">Deleted?</label>
+    <span>
+      <% if (image.deleted) { %>
+      <strong>Yes</strong>
+      <% } else { %> No <% } %>
+    </span>
+  </p>
+  <% if (image.deleted) { %>
+  <p>
+    <label class="label">Deletion reason</label>
+    <span>
+      <%= image.deletionReason %>
+    </span>
+  </p>
+  <% } %>
+
+  <p>
+    <h2>Delete</h2>
+    <p class="has-text-grey">Abuse of your moderation powers will result in your moderator status being revoked and being banned. All of your moderation actions are logged.</p>
+    <div class="field is-grouped">
+      <p class="control">
+        <a
+          class="button is-warning"
+          href="/moderator/images/<%= image.id %>/delete?type=LEGAL&loc=image"
+        >
+          Legal
+        </a>
+      </p>
+      <p class="control">
+        <a
+          class="button is-danger"
+          href="/moderator/images/<%= image.id %>/delete?type=COPYRIGHT&loc=image"
+        >
+          Copyright
+        </a>
+      </p>
+    </div>
+  </p>
+</div>

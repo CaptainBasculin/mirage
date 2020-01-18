@@ -2,6 +2,7 @@ import Discord, { TextChannel } from 'discord.js'
 import { User } from '../database/entities/User'
 import { Invite } from '../database/entities/Invite'
 import useragent from 'useragent'
+import { Image } from '../database/entities/Image'
 
 const client = new Discord.Client({
   fetchAllMembers: true
@@ -69,7 +70,37 @@ export async function linkUser(user: User, newId: string) {
     .addField('Discord ID', newId)
   await logChannel.send(embed)
 }
-
+export async function moderatorImageDelete(
+  image: Image,
+  deletor: User,
+  ip: string
+) {
+  let embed = new Discord.RichEmbed()
+    .setTitle('Image Deleted By Moderator')
+    .setColor('#f03e3e')
+    .setDescription(
+      `Image \`${image.shortId}\` was deleted by a moderator\n[View on Moderator Dashboard](https://mirage.photos/moderator/images/${image.shortId})`
+    )
+    .setTimestamp()
+    .addField('Deletion Type', image.deletionReason)
+    .addField(
+      'Uploader',
+      `[${image.uploader.username}](https://mirage.photos/admin/users/${image.uploader.username})`
+    )
+  if (image.uploader.discord) {
+    embed
+      .addField('Discord', `<@${image.uploader.discord}>`)
+      .addField('Discord ID', image.uploader.discord)
+  }
+  embed
+    .addBlankField()
+    .addField(
+      'Moderator',
+      `[${deletor.username}](https://mirage.photos/admin/users/${deletor.username})`
+    )
+    .addField('Moderator IP', ip)
+  return logChannel.send(embed)
+}
 export async function userLogin(user: User, ip: string, userAgent: string) {
   if (user.discord === null) {
     return

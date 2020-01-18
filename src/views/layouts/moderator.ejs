@@ -32,7 +32,7 @@
                   <li>
                     <a
                       href="/moderator"
-                      class="<%= originalUrl('/moderator') %>"
+                      class="<%= originalUrlEq('/moderator') %>"
                     >
                       Dashboard
                     </a>
@@ -45,8 +45,8 @@
                 <ul class="menu-list">
                   <li>
                     <a
-                      href="/moderator/image"
-                      class="<%= originalUrlEq('/moderator/image') %>"
+                      href="/moderator/images"
+                      class="<%= originalUrl('/moderator/images') %>"
                     >
                       Image Look-up
                     </a>
@@ -55,6 +55,18 @@
               </aside>
             </div>
             <div class="column table-container">
+              <div class="content">
+                <% if (query.message) { %>
+                <article class="message <%= query.class %>">
+                  <div class="message-header">
+                    <p>Message</p>
+                  </div>
+                  <div class="message-body">
+                    <%= query.message %>
+                  </div>
+                </article>
+                <% } %>
+              </div>
               <%- body %>
             </div>
           </div>
