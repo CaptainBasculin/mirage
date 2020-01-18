@@ -70,7 +70,7 @@ OAuthRouter.route('/discord/redirect').get(async (req, res) => {
   if (
     !guildJson.find((guild: any) => guild.id === process.env.DISCORD_SERVER)
   ) {
-    const addRes = await fetch(
+    await fetch(
       `https://discordapp.com/api/v6/guilds/${process.env
         .DISCORD_SERVER!}/members/${userJson.id}`,
       {
