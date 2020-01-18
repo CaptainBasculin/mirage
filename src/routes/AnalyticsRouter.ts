@@ -28,8 +28,8 @@ AnalyticsRouter.route('/').get(async (req, res) => {
   })
   let usersSerialized = users.map(user => user.serialize())
   let imagesSerialized = images.map(image => image.serialize())
-  let usersJSON = JSON.stringify(usersSerialized).replace(/'/, "\\'")
-  let imagesJSON = JSON.stringify(imagesSerialized).replace(/'/, "\\'")
+  let usersJSON = JSON.stringify(usersSerialized).replace(/'/g, "\\'")
+  let imagesJSON = JSON.stringify(imagesSerialized).replace(/'/g, "\\'")
   res.render('pages/analytics/index', {
     layout: 'layouts/analytics',
     users,
