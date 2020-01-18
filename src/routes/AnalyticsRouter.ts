@@ -1,12 +1,8 @@
 import express, { Request, Response } from 'express'
 import bodyParser from 'body-parser'
 import { NextFunction } from 'connect'
-import { Invite } from '../database/entities/Invite'
 import { Image } from '../database/entities/Image'
 import { User } from '../database/entities/User'
-import { ShortenedUrl } from '../database/entities/ShortenedUrl'
-import { bucket } from '../utils/StorageUtil'
-import sgMail from '@sendgrid/mail'
 
 const AnalyticsRouter = express.Router()
 AnalyticsRouter.use(
