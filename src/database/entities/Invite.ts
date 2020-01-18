@@ -1,11 +1,4 @@
-import {
-  Entity,
-  Column,
-  BaseEntity,
-  PrimaryColumn,
-  ManyToOne,
-  OneToOne
-} from 'typeorm'
+import { Entity, Column, BaseEntity, PrimaryColumn, ManyToOne } from 'typeorm'
 import { User } from './User'
 
 @Entity()
@@ -16,7 +9,10 @@ export class Invite extends BaseEntity {
   @Column()
   invite: string
 
-  @ManyToOne(type => User, user => user.invites)
+  @ManyToOne(
+    type => User,
+    user => user.invites
+  )
   creator: User
 
   @Column({
