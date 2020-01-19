@@ -171,6 +171,7 @@ ApiRouter.route(['/image/:file', '/image/*/:file']).get(async (req, res) => {
       },
       relations: ['creator']
     })
+
     if (!shortUrl) {
       return res.status(404).send('URL not found')
     }
@@ -196,6 +197,11 @@ ApiRouter.route(['/image/:file', '/image/*/:file']).get(async (req, res) => {
     let [_file] = await bucket.file('/meta/logo.png').get()
     let buf = await rb(_file.createReadStream())
     return res.contentType('image/png').send(buf)
+  }
+  if (req.query && typeof req.query.lookup !== 'undefined') {
+    return res.redirect(
+      `https://mirage.photos/moderator/images/${req.params.file}`
+    )
   }
   let image = await Image.findOne({
     where: {
