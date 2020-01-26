@@ -4,7 +4,11 @@ import multer from 'multer'
 import { bucket, oldBucket1, oldBucket2 } from '../utils/StorageUtil'
 import crypto from 'crypto'
 import { User } from '../database/entities/User'
-import { randomImageId, randomUserId } from '../utils/RandomUtil'
+import {
+  randomImageId,
+  randomUserId,
+  randomInvisibleId
+} from '../utils/RandomUtil'
 import { Image } from '../database/entities/Image'
 import rb from 'raw-body'
 import path from 'path'
@@ -147,12 +151,13 @@ ApiRouter.route('/shorten').post(async (req, res) => {
       .status(401)
       .send('User is suspended, check email for more information')
   }
+  let rndFn = user.invisibleShortIds ? randomInvisibleId : randomImageId
   let host = req.body.host || req.hostname || 'mirage.re'
   let url = new ShortenedUrl()
   url.id = randomUserId()
   url.creator = user
   url.host = host
-  url.shortId = randomImageId(user.longNames)
+  url.shortId = rndFn(user.longNames)
   url.url = req.body.url
   url.creationDate = new Date()
   await url.save()
