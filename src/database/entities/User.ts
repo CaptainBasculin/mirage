@@ -60,6 +60,11 @@ export class User extends BaseEntity {
   @Column({
     default: false
   })
+  invisibleShortIds: boolean
+
+  @Column({
+    default: false
+  })
   inviteCreator: boolean
 
   @Column({
@@ -110,7 +115,8 @@ export class User extends BaseEntity {
       suspensionReason: this.suspensionReason,
       discord: this.discord,
       inviteCreator: this.inviteCreator,
-      availableInvites: this.availableInvites
+      availableInvites: this.availableInvites,
+      invisibleShortIds: this.invisibleShortIds
     }
   }
 }
