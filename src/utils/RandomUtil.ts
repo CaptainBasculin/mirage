@@ -6,10 +6,18 @@ const idGen = new FlakeId({
   worker: 0
 })
 
+const invisibleCharset = ['\u200B', '\u2060', '\u180E', '\u200D', '\u200C']
+
 export function randomImageId(secure = false) {
   return randomstring.generate({
     length: secure ? 16 : 7,
     charset: 'AaBbCcDdEeFf1234567890'
+  })
+}
+export function randomInvisibleId(secure = false) {
+  return randomstring.generate({
+    length: 18,
+    charset: invisibleCharset.join('')
   })
 }
 export function randomUserId() {
