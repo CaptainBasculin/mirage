@@ -15,10 +15,12 @@ export function randomImageId(secure = false) {
   })
 }
 export function randomInvisibleId(secure = false) {
-  return randomstring.generate({
-    length: 18,
-    charset: invisibleCharset.join('')
-  })
+  return (
+    randomstring.generate({
+      length: 18,
+      charset: invisibleCharset.join('')
+    }) + '\u200B'
+  )
 }
 export function randomUserId() {
   let buf = idGen.next()
