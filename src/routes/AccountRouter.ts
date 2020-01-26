@@ -59,6 +59,11 @@ AccountRouter.route('/secure_names').post(async (req, res) => {
   await req.user.save()
   return res.redirect('/account')
 })
+AccountRouter.route('/invisible_short_ids').post(async (req, res) => {
+  req.user.invisibleShortIds = !req.user.invisibleShortIds
+  await req.user.save()
+  return res.redirect('/account')
+})
 AccountRouter.route('/urlshortener')
   .get((req, res) => {
     res.render('pages/account/urlshortener', {

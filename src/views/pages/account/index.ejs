@@ -43,6 +43,21 @@
       </div>
     </form>
   </div>
+  <br />
+  <div>
+    <form action="/account/invisible_short_ids" method="POST">
+      <h3>Invisible Short IDs</h3>
+      <h4>Toggle "invisible" paths for shortened URLs</h4>
+      <div class="field">
+        Invisible short IDs are currently
+        <strong><%= profile.invisibleShortIds ? "ON" : "OFF" %></strong>
+      </div>
+
+      <div class="field">
+        <button class="button is-link" type="submit">Toggle</button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <script>
