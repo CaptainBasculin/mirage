@@ -46,6 +46,41 @@
   </p>
   <% } %>
 
+  <% if (reports.length > 0) { %>
+    <p>
+      <label class="label">Unresolved Reports</label>
+      <table class="table is-hoverable is-fullwidth is-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Reporter</th>
+            <th>Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% reports.map(report => { %>
+            <tr>
+              <td>
+                <a href="/moderator/reports/<%= report.id %>">
+                  <code><%= report.id %></code>
+                </a>
+              </td>
+              <td>
+                <a href="https://ipaddress.com/ipv4/<%= report.reporterIp %>">
+                  <%= report.reporterIp %>
+                </a>
+              </td>
+              <td>
+                <%= report.reason %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      
+    </p>
+  <% } %>
+  
   <p>
     <h2>Delete</h2>
     <p class="has-text-grey">Abuse of your moderation powers will result in your moderator status being revoked and being banned. All of your moderation actions are logged.</p>

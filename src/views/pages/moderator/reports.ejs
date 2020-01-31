@@ -1,0 +1,49 @@
+<h1 class="title">Reports</h1>
+<h2 class="subtitle">
+  View unresolved reports
+</h2>
+<% if (query.message) { %>
+<article class="message <%= query.class %>">
+  <div class="message-header">
+    <p>Message</p>
+  </div>
+  <div class="message-body">
+    <%= query.message %>
+  </div>
+</article>
+<% } %>
+
+<table class="table is-hoverable is-fullwidth is-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Image</th>
+      <th>Reporter</th>
+      <th>Reason</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% reports.map(report => { %>
+    <tr>
+      <td>
+        <a href="/moderator/reports/<%= report.id %>">
+          <code><%= report.id %></code>
+        </a>
+      </td>
+      <td>
+        <a href="/moderator/images/<%= report.image.shortId %>">
+          <code><%= report.image.shortId %></code>
+        </a>
+      </td>
+      <td>
+        <a href="https://ipaddress.com/ipv4/<%= report.reporterIp %>">
+          <%= report.reporterIp %>
+        </a>
+      </td>
+      <td>
+        <%= report.reason %>
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>

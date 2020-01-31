@@ -25,6 +25,11 @@ export class Report extends BaseEntity {
   })
   resolved: boolean
 
+  @Column({
+    nullable: true
+  })
+  resolvedBy: string
+
   @Column()
   createdOn: Date
 

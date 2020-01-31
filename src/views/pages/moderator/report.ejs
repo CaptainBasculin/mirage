@@ -1,0 +1,58 @@
+
+<div class="content">
+  <h1>Report <code><%= report.id %></code></h1>
+  <p>
+    <label class="label">Snowflake</label>
+    <code><%= report.id %></code>
+  </p>
+  <p>
+    <label class="label">Reporter IP</label>
+    <a href="https://ipaddress.com/ipv4/<%= report.reporterIp %>">
+      <%= report.reporterIp %>
+    </a>
+  </p>
+  <p>
+    <label class="label">Reason</label>
+    <pre><%= report.reason %></pre>
+  </p>
+  <p>
+    <label class="label">Image</label>
+    <a href="/moderator/images/<%= report.image.shortId %>">
+      <%= report.image.path %>
+    </a>
+  </p>
+  <p>
+    <label class="label">Resolved?</label>
+    <span>
+      <% if (report.resolved) { %>
+      <strong>Yes</strong>
+      <% } else { %> No <% } %>
+    </span>
+  </p>
+  <% if (report.resolved) { %>
+  <p>
+    <label class="label">Resolved by</label>
+    <span>
+      <%= report.resolvedBy %>
+    </span>
+  </p>
+  <% } %>
+
+  <% if (!report.resolved) { %>
+  <p>
+    <h2>Resolve</h2>
+    <p class="has-text-grey">Abuse of your moderation powers will result in your moderator status being revoked and being banned. All of your moderation actions are logged.</p>
+    <p class="has-text-grey">Only resolve a report if it is invalid or the image has had action taken on it.</p>
+    <div class="field is-grouped">
+      <p class="control">
+        <a
+          class="button is-success"
+          href="/moderator/reports/<%= report.id %>/resolve"
+        >
+          Resolve
+        </a>
+      </p>
+    </div>
+  </p>
+  <% } %>
+</div>

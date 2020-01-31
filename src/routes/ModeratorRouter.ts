@@ -4,6 +4,7 @@ import { NextFunction } from 'connect'
 import { Image } from '../database/entities/Image'
 import { bucket } from '../utils/StorageUtil'
 import { moderatorImageDelete } from '../bot'
+import { Report } from '../database/entities/Report'
 
 const ModeratorRouter = express.Router()
 ModeratorRouter.use(
@@ -32,6 +33,60 @@ ModeratorRouter.route('/').get((req, res) => {
   })
 })
 
+ModeratorRouter.route('/reports').get(async (req, res) => {
+  let reports = await Report.find({
+    where: {
+      resolved: false
+    },
+    relations: ['image']
+  })
+  res.render('pages/moderator/reports', {
+    layout: 'layouts/moderator',
+    reports
+  })
+})
+
+ModeratorRouter.route('/reports/:id').get(async (req, res) => {
+  let report = await Report.findOne({
+    where: {
+      id: req.params.id
+    },
+    relations: ['image']
+  })
+  if (!report) {
+    return res
+      .status(404)
+      .send(
+        'whoops that report doesnt exist, <a href="/moderator/reports">go back?</a>'
+      )
+  }
+  res.render('pages/moderator/report', {
+    layout: 'layouts/moderator',
+    report
+  })
+})
+
+ModeratorRouter.route('/reports/:id/resolve').get(async (req, res) => {
+  let report = await Report.findOne({
+    where: {
+      id: req.params.id
+    }
+  })
+  if (!report) {
+    return res
+      .status(404)
+      .send(
+        'whoops that report doesnt exist, <a href="/moderator/reports">go back?</a>'
+      )
+  }
+  report.resolved = true
+  report.resolvedBy = req.user.id
+  await report.save()
+  return res.redirect(
+    `/moderator/reports/${req.params.id}?message=Report resolved successfully&class=is-success`
+  )
+})
+
 ModeratorRouter.route('/images')
   .get((req, res) => {
     res.render('pages/moderator/lookup', {
@@ -48,14 +103,19 @@ ModeratorRouter.route('/images/:id').get(async (req, res) => {
     where: {
       shortId
     },
-    relations: ['uploader']
+    relations: ['uploader', 'reports']
   })
   if (!image) {
     return res.send('Image not found. <a href="/moderator/image">go back</a>')
   }
+  let reports = [] as any
+  if (image.reports) {
+    reports = image.reports.filter(report => !report.resolved)
+  }
   return res.render('pages/moderator/image', {
     layout: 'layouts/moderator',
-    image
+    image,
+    reports
   })
 })
 
