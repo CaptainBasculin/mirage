@@ -88,6 +88,8 @@ app.use(
 )
 
 app.use(async (req, res, next) => {
+  res.locals.analyticsEnabled = process.env.ANALYTICS_ENABLED === 'true'
+  res.locals.analyticsTrackingCode = process.env.ANALYTICS_TRACKINGID
   if (req.session!.loggedIn) {
     let relations: string[] = [] // ['images', 'invites', 'urls']
     if (req.url.includes('/account/images')) {
