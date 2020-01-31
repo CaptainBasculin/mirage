@@ -38,7 +38,7 @@ const BaseUrlShortener = {
 }
 function authMiddleware(req: Request, res: Response, next: NextFunction) {
   if (!req.user) {
-    return res.redirect('/auth/login')
+    return res.redirect(`/auth/login?next=${req.originalUrl}`)
   }
 
   return next()
@@ -264,5 +264,11 @@ AccountRouter.route('/urls/nuke')
     )
     return res.redirect('/account/urls/nuke?stage=2')
   })
+
+AccountRouter.route('/upload').get((req, res) => {
+  return res.render('pages/account/upload', {
+    layout: 'layouts/account'
+  })
+})
 
 export default AccountRouter

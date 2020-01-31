@@ -38,6 +38,12 @@
       <div class="navbar-end">
         <div class="navbar-item">
           <% if (loggedIn) { %>
+          <a
+            class="navbar-item <%= originalUrlEq('/account/upload') %>"
+            href="/account/upload"
+          >
+            Upload
+          </a>
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link" href="/account">
               <span class="icon">

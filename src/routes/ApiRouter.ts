@@ -75,6 +75,23 @@ ApiRouter.route('/upload').post(upload.single('file'), async (req, res) => {
   )
   return res.send(image.url)
 })
+ApiRouter.route('/upload/site').post(
+  upload.single('file'),
+  async (req, res) => {
+    if (!req.loggedIn) {
+      return res.status(403).send('not logged in')
+    }
+    let user = req.user
+    if (user.suspended) {
+      return res
+        .status(401)
+        .send('User is suspended, check email for more information')
+    }
+    let image = await uploadImage('mirage.wtf', user, req.file)
+    return res.send(image.url)
+  }
+)
+
 ApiRouter.route('/upload/shortcuts/:host/:key').post(
   upload.single('file'),
   async (req, res) => {

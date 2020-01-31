@@ -1,0 +1,97 @@
+<h1 class="title">Upload</h1>
+<h2 class="subtitle">
+  Upload an file
+</h2>
+<form action="/api/upload/site" method="POST" class="dropzone" id="dropzone">
+  <div class="fallback">
+    <input name="file" type="file" />
+  </div>
+</form>
+<div class="Box" id="previews">
+  <div id="template" class="Box-row">
+    <div class="d-flex flex-items-center">
+      <div class="flex-auto">
+        <img data-dz-thumbnail />
+        <div class="text-small text-gray-light">
+          <span data-dz-name></span>
+          <strong class="error text-danger" data-dz-errormessage></strong>
+        </div>
+        <div>
+          <p class="size" data-dz-size></p>
+        </div>
+      </div>
+      <div>
+        <button type="button" class="btn btn-primary start">
+          Start
+        </button>
+        <button data-dz-remove type="button" class="btn btn-warning cancel">
+          Cancel
+        </button>
+        <span class="finished" style="display: none;">upload finished</span>
+      </div>
+    </div>
+    <span class="Progress">
+      <span
+        class="Progress-value bg-green"
+        style="width: 0%;"
+        data-dz-uploadprogress
+      ></span>
+    </span>
+  </div>
+</div>
+<!-- HTML heavily inspired by http://blueimp.github.io/jQuery-File-Upload/ -->
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js"
+  integrity="sha256-cs4thShDfjkqFGk5s2Lxj35sgSRr4MRcyccmi0WKqCM="
+  crossorigin="anonymous"
+></script>
+<script>
+  let previewNode = document.querySelector('#template')
+  previewNode.id = ''
+  let previewTemplate = previewNode.parentNode.innerHTML
+  previewNode.parentNode.removeChild(previewNode)
+  Dropzone.options.dropzone = {
+    paramName: 'file',
+    maxFilesize: 100,
+    thumbnailWidth: 80,
+    thumbnailHeight: 80,
+    accept: (file, done) => {
+      console.log(file)
+      done()
+    },
+    previewTemplate: previewTemplate,
+    previewsContainer: '#previews',
+    autoQueue: false,
+    init: function() {
+      this.on('addedfile', file => {
+        file.previewElement.querySelector('.start').onclick = () => {
+          this.enqueueFile(file)
+        }
+      })
+      this.on('sending', file => {
+        file.previewElement
+          .querySelector('.start')
+          .setAttribute('disabled', 'disabled')
+      })
+      this.on('success', (file, response) => {
+        file.previewElement.querySelector('.start').style = 'display: none;'
+        file.previewElement.querySelector('.cancel').style = 'display: none;'
+        let finishedEl = file.previewElement.querySelector('.finished')
+        console.log(response)
+        finishedEl.innerHTML = `Upload complete. View your image at <a href="${response}">${response}</a>`
+        finishedEl.style = ''
+      })
+    }
+  }
+</script>
+<style>
+  .dz-default {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 10em;
+    padding: 4px;
+    border: 1px dashed #6f42c1;
+  }
+</style>
