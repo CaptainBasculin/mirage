@@ -285,8 +285,11 @@ AuthRouter.route('/forgot_password_prompt')
         key: req.body.key
       })
     }
+
     let hash = await argon2.hash(req.body.password)
     user.password = hash
+    user.passwordResetPending = true
+    user.passwordResetToken = randomKey()
     await user.save()
     return res.render('pages/auth/forgot_password_prompt_success')
   })
