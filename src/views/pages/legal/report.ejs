@@ -1,6 +1,66 @@
-<h1 class="title">Report Abuse</h1>
-<h2 class="subtitle">
-  Report abuse
-</h2>
+<div class="container">
+  <h1 class="title">Report Abuse</h1>
+  <h2 class="subtitle">
+    Report abuse of images
+  </h2>
 
-<form action="/legal/report" method="POST"></form>
+  <form action="/legal/report" method="POST">
+    <div class="field">
+      <label class="label">Image path</label>
+      <div class="control">
+        <input name="image" class="input" type="text" required />
+      </div>
+      <p class="help">
+        This may look like, "/6aD34f.png", "6aD34f", or "6aD34f.png"
+      </p>
+      <% if (typeof image !== 'undefined') { %>
+      <p class="help is-danger">
+        <%= image %>
+      </p>
+      <% } %>
+    </div>
+    <div class="field">
+      <label class="label">Reason</label>
+      <div class="control">
+        <input
+          name="reason"
+          class="input"
+          type="text"
+          required
+          maxlength="256"
+        />
+      </div>
+      <p class="help">
+        Max length is 256. Include why this image breaks rules.
+      </p>
+      <% if (typeof reason !== 'undefined') { %>
+      <p class="help is-danger">
+        <%= reason %>
+      </p>
+      <% } %>
+    </div>
+    <div class="field">
+      <p class="has-text-grey">
+        Abuse of this form may result in your IP being blacklisted from Mirage
+      </p>
+      <p class="has-text-grey">
+        By submitting this form, you accept that you are not abusing it.
+      </p>
+    </div>
+    <div class="field">
+      <div class="g-recaptcha" data-sitekey="<%= siteKey %>"></div>
+      <% if (typeof captcha !== 'undefined') { %>
+      <p class="help is-danger">
+        <%= captcha %>
+      </p>
+      <% } %>
+    </div>
+    <div class="field">
+      <p class="control">
+        <a class="button is-primary" href="/">Cancel</a>
+        <button class="button is-warning" type="submit">Submit</button>
+      </p>
+    </div>
+  </form>
+</div>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>

@@ -1,5 +1,13 @@
-import { Entity, Column, BaseEntity, PrimaryColumn, ManyToOne } from 'typeorm'
+import {
+  Entity,
+  Column,
+  BaseEntity,
+  PrimaryColumn,
+  ManyToOne,
+  OneToMany
+} from 'typeorm'
 import { User } from './User'
+import { Report } from './Report'
 
 @Entity()
 export class Image extends BaseEntity {
@@ -9,7 +17,10 @@ export class Image extends BaseEntity {
   @Column()
   shortId: string
 
-  @ManyToOne(type => User, user => user.images)
+  @ManyToOne(
+    type => User,
+    user => user.images
+  )
   uploader: User
 
   @Column()
@@ -45,6 +56,12 @@ export class Image extends BaseEntity {
     default: 'N/A'
   })
   deletionReason: string
+
+  @OneToMany(
+    type => Report,
+    report => report.image
+  )
+  reports: Report[]
 
   userSerialize() {
     return {
