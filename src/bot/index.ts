@@ -3,16 +3,20 @@ import { User } from '../database/entities/User'
 import { Invite } from '../database/entities/Invite'
 import useragent from 'useragent'
 import { Image } from '../database/entities/Image'
+import { Report } from '../database/entities/Report'
 
 const client = new Discord.Client({
   fetchAllMembers: true
 })
 
 let logChannel: TextChannel
-
+let reportLogChannel: TextChannel
 client.on('ready', async () => {
   console.log('Discord bot ready')
   logChannel = client.channels.get(process.env.DISCORD_LOGS!) as TextChannel
+  reportLogChannel = client.channels.get(
+    process.env.DISCORD_REPORTLOGS!
+  ) as TextChannel
 })
 
 export async function botLogin() {
@@ -156,4 +160,21 @@ export async function userSessionSteal(
     .addField('Device', ua.device.toString())
     .addField('OS', ua.os.toString())
   discordUser.send(embed)
+}
+
+export async function reportSubmitted(report: Report) {
+  let embed = new Discord.RichEmbed()
+    .setTitle('Abuse Report Submitted')
+    .setColor('#f03e3e')
+    .setDescription(
+      `Report \`${report.id}\` was submitted\n[View on Moderator Dashboard](https://mirage.photos/moderator/reports/${report.id})`
+    )
+    .setTimestamp()
+    .addField('Reporter IP', report.reporterIp)
+    .addField('Reason', `\`\`\`\n${report.reason}\`\`\``)
+    .addField(
+      'Image',
+      `[${report.image.path}](https://mirage.photos/moderator/images/${report.image.shortId})`
+    )
+  return reportLogChannel.send(embed)
 }

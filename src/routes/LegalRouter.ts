@@ -5,6 +5,7 @@ import { Report } from '../database/entities/Report'
 import { randomUserId } from '../utils/RandomUtil'
 import { Image } from '../database/entities/Image'
 import querystring from 'querystring'
+import { reportSubmitted } from '../bot'
 async function verifyCaptcha(response: string, ip: string): Promise<Boolean> {
   try {
     const resp = await fetch(
@@ -105,7 +106,7 @@ LegalRouter.route('/report')
     report.reason = req.body.reason
     report.createdOn = new Date()
     await report.save()
-
+    await reportSubmitted(report)
     return res.render('pages/legal/report_success', {
       id: report.id
     })
