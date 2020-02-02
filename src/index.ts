@@ -89,10 +89,7 @@ app.use(
 app.use(async (req, res, next) => {
   // banners
   res.locals.banners = []
-  res.locals.banners.push({
-    class: 'is-danger',
-    message: 'this is a test'
-  })
+
   return next()
 })
 app.use(async (req, res, next) => {
