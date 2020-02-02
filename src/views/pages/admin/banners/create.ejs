@@ -1,0 +1,54 @@
+<h1 class="title">Create Banner</h1>
+<h2 class="subtitle">
+  Create a global banner
+</h2>
+
+<% if (query.message) { %>
+<article class="message <%= query.class %>">
+  <div class="message-header">
+    <p>Message</p>
+  </div>
+  <div class="message-body">
+    <%= query.message %>
+  </div>
+</article>
+<% } %>
+
+<a href="/admin/banners" class="button is-link">Back to Listing</a>
+
+<form method="POST">
+  <div class="field">
+    <label class="label">Class</label>
+    <div class="control">
+      <input
+        name="class"
+        class="input"
+        type="text"
+        placeholder="is-danger"
+        value="is-danger"
+      />
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="label">Message</label>
+    <div class="control">
+      <textarea
+        name="message"
+        class="textarea"
+        placeholder="Your message"
+      ></textarea>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="label">Enabled</label>
+    <div class="control">
+      <input name="enabled" type="checkbox" class="checkbox" checked />
+    </div>
+  </div>
+
+  <div class="field">
+    <button class="button is-primary" type="submit">Submit</button>
+  </div>
+</form>

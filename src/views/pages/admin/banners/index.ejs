@@ -1,0 +1,38 @@
+<h1 class="title">Banners</h1>
+<h2 class="subtitle">
+  View banners
+</h2>
+
+<% if (query.message) { %>
+<article class="message <%= query.class %>">
+  <div class="message-header">
+    <p>Message</p>
+  </div>
+  <div class="message-body">
+    <%= query.message %>
+  </div>
+</article>
+<% } %>
+
+<a href="/admin/banners/create" class="button is-primary">Create</a>
+
+<table class="table is-hoverable is-fullwidth is-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Enabled</th>
+      <th>Class</th>
+      <th>Message</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% banners.map(banner => { %>
+    <tr>
+      <td><a href="/admin/banners/<%= banner.id %>"><%= banner.id %></a></td>
+      <td><input type="checkbox" disabled value="<%= banner.enabled %>" /></td>
+      <td><%= banner.class %></td>
+      <td><%= banner.message %></td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
