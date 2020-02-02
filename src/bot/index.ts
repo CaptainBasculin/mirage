@@ -178,3 +178,41 @@ export async function reportSubmitted(report: Report) {
     )
   return reportLogChannel.send(embed)
 }
+
+export async function sendImageNukeCompleted(user: User, length: number) {
+  if (user.discord === null) {
+    return false
+  }
+  let discordUser = logChannel.guild.members.get(user.discord)
+  if (!discordUser) {
+    return false
+  }
+  let embed = new Discord.RichEmbed()
+    .setTitle('Image Nuke Completed')
+    .setColor('#1098ad')
+    .setDescription('Your images were successfully deleted from Mirage servers')
+    .setTimestamp()
+    .addField('Images Deleted', length.toString())
+  await discordUser!.user.send(embed)
+  return true
+}
+
+export async function sendURLNukeCompleted(user: User, length: number) {
+  if (user.discord === null) {
+    return false
+  }
+  let discordUser = logChannel.guild.members.get(user.discord)
+  if (!discordUser) {
+    return false
+  }
+  let embed = new Discord.RichEmbed()
+    .setTitle('URL Nuke Completed')
+    .setColor('#1098ad')
+    .setDescription(
+      'Your shortened URLs were successfully deleted from Mirage servers'
+    )
+    .setTimestamp()
+    .addField('URLs Deleted', length.toString())
+  await discordUser!.user.send(embed)
+  return true
+}

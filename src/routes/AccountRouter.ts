@@ -7,6 +7,7 @@ import bodyParser from 'body-parser'
 import { Image } from '../database/entities/Image'
 import { ShortenedUrl } from '../database/entities/ShortenedUrl'
 import { bucket } from '../utils/StorageUtil'
+import { sendImageNukeCompleted, sendURLNukeCompleted } from '../bot'
 const AccountRouter = express.Router()
 AccountRouter.use(
   bodyParser.urlencoded({
@@ -178,17 +179,20 @@ AccountRouter.route('/images/nuke')
     }
     let images = await Image.find({
       where: {
-        uploader: req.user.id
+        uploader: req.user.id,
+        deleted: false
       }
     })
-    await Promise.all(
+    Promise.all(
       images.map(async image => {
         await bucket.file(image.path).delete()
         image.deleted = true
         image.deletionReason = 'USER'
         await image.save()
       })
-    )
+    ).then(async () => {
+      await sendImageNukeCompleted(req.user, images.length)
+    })
     return res.redirect('/account/images/nuke?stage=2')
   })
 AccountRouter.route('/images/:id/delete').get(async (req, res) => {
@@ -252,16 +256,19 @@ AccountRouter.route('/urls/nuke')
     }
     let urls = await ShortenedUrl.find({
       where: {
-        creator: req.user.id
+        creator: req.user.id,
+        deleted: false
       }
     })
-    await Promise.all(
+    Promise.all(
       urls.map(async url => {
         url.deleted = true
         url.deletionReason = 'USER'
         await url.save()
       })
-    )
+    ).then(async () => {
+      await sendURLNukeCompleted(req.user, urls.length)
+    })
     return res.redirect('/account/urls/nuke?stage=2')
   })
 
