@@ -26,6 +26,9 @@ import morgan from 'morgan'
 import Logger from 'logdna'
 import * as os from 'os'
 import { Banner } from './database/entities/Banner'
+import { Server } from 'http'
+import SocketIO from 'socket.io'
+import { initCounts } from './utils/SocketUtil'
 dotenv.config()
 
 // This allows TypeScript to detect our global value
@@ -50,6 +53,9 @@ const logger = Logger.createLogger(process.env.LOGDNA_INGESTION_KEY!, {
 const RedisStore = _RedisStore(session)
 
 const app = express()
+
+const server = new Server(app)
+const io = SocketIO(server)
 
 const stream = {
   write: (message: any) => {
@@ -286,9 +292,9 @@ createConnection({
   subscribers: [__dirname + '/database/subscribers/**/*.{ts,js}']
 })
   .then(() => {
-    app.listen(process.env.PORT, () => {
+    server.listen(process.env.PORT, () => {
       console.log('listening on port', process.env.PORT)
-
+      initCounts()
       botLogin()
     })
   })
@@ -296,4 +302,4 @@ createConnection({
     console.error(err)
   })
 
-export default app
+export { server, io }

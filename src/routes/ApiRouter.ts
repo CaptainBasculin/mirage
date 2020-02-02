@@ -13,6 +13,8 @@ import { Image } from '../database/entities/Image'
 import rb from 'raw-body'
 import path from 'path'
 import { ShortenedUrl } from '../database/entities/ShortenedUrl'
+import { increaseImage, increaseUrl } from '../utils/SocketUtil'
+
 const ApiRouter = express.Router()
 
 ApiRouter.use(bodyParser.json())
@@ -50,6 +52,7 @@ async function uploadImage(
   image.originalName = file.originalname
   await image.save()
   await bucket.file(image.path).save(file.buffer)
+  increaseImage()
   return image
 }
 
@@ -178,6 +181,7 @@ ApiRouter.route('/shorten').post(async (req, res) => {
   url.url = req.body.url
   url.creationDate = new Date()
   await url.save()
+  increaseUrl()
   return res.send(`https://${host}/${url.shortId}`)
 })
 

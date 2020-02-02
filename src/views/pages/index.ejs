@@ -20,19 +20,19 @@
   <div class="level-item has-text-centered">
     <div>
       <p class="heading">Users</p>
-      <p class="title"><%= users %></p>
+      <p class="title" id="live-users"><%= users %></p>
     </div>
   </div>
   <div class="level-item has-text-centered">
     <div>
       <p class="heading">Images</p>
-      <p class="title"><%= images %></p>
+      <p class="title" id="live-images"><%= images %></p>
     </div>
   </div>
   <div class="level-item has-text-centered">
     <div>
       <p class="heading">Shortened URLs</p>
-      <p class="title"><%= urls %></p>
+      <p class="title" id="live-urls"><%= urls %></p>
     </div>
   </div>
 </nav>
@@ -71,3 +71,17 @@
     height: 500px;
   }
 </style>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  let socket = io()
+  socket.on('image', images => {
+    console.log(images)
+    document.getElementById('live-images').innerText = images
+  })
+  socket.on('url', urls => {
+    document.getElementById('live-urls').innerText = urls
+  })
+  socket.on('user', users => {
+    document.getElementById('live-users').innerText = users
+  })
+</script>
