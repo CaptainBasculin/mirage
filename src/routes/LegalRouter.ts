@@ -81,7 +81,6 @@ LegalRouter.route('/report')
       })
     }
 
-    let tmpId = req.body.image
     let tmpArr = req.body.image.split('/')
     let shortId = tmpArr[tmpArr.length - 1].split('.')[0]
 
