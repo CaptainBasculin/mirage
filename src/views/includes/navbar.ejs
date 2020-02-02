@@ -1,4 +1,9 @@
-  <nav
+<% if (banners.length > 0) { %> <% banners.map(banner => { %>
+  <div class="banner <%= banner.class %>">
+    <%= banner.message %>
+  </div>
+  <% }) %> <% } %>
+<nav
     class="navbar is-light has-shadow"
     role="navigation"
     aria-label="main navigation"

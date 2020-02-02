@@ -11,16 +11,7 @@
     <div class="content-main">
       <% include ../includes/navbar %>
       <div>
-        <% if (globalMessage) { %>
-        <article class="message <%= globalMessageClass %>">
-          <div class="message-header">
-            <p>Notice</p>
-          </div>
-          <div class="message-body">
-            <%= globalMessage %>
-          </div>
-        </article>
-        <% } %> <%- body %>
+        <%- body %>
       </div>
       <% include ../includes/footer %>
     </div>

@@ -86,7 +86,15 @@ app.use(
     saveUninitialized: true
   })
 )
-
+app.use(async (req, res, next) => {
+  // banners
+  res.locals.banners = []
+  res.locals.banners.push({
+    class: 'is-danger',
+    message: 'this is a test'
+  })
+  return next()
+})
 app.use(async (req, res, next) => {
   res.locals.analyticsEnabled = process.env.ANALYTICS_ENABLED === 'true'
   res.locals.analyticsTrackingCode = process.env.ANALYTICS_TRACKINGID
@@ -115,16 +123,19 @@ app.use(async (req, res, next) => {
     req.loggedIn = false
   }
   res.locals.loggedIn = req.loggedIn
-  res.locals.globalMessage = false
-  res.locals.globalMessageClass = false
   if (req.loggedIn) {
     if (req.user.suspended) {
       if (req.user.admin) {
-        res.locals.globalMessage = `Your account was suspended for the following reason:\n${req.user.suspensionReason}, but you are an admin, which prevented you from being logged out.`
-        res.locals.globalMessageClass = 'is-warning'
+        res.locals.banners.push({
+          class: 'is-danger',
+          message:
+            'Your account was suspended, but you are an admin. You were not logged out.'
+        })
       } else {
-        res.locals.globalMessage = `Your account was suspended for the following reason:\n${req.user.suspensionReason}. You have been logged out.`
-        res.locals.globalMessageClass = 'is-danger'
+        res.locals.banners.push({
+          class: 'is-danger',
+          message: 'Your account was suspended, please check your email.'
+        })
         req.loggedIn = false
         delete req.user
         delete req.session
@@ -146,9 +157,10 @@ app.use(async (req, res, next) => {
         req.headers['user-agent'] || ''
       )
       req.session.loggedIn = false
-
-      res.locals.globalMessage = `Your IP has changed, please login again.`
-      res.locals.globalMessageClass = 'is-danger'
+      res.locals.banners.push({
+        class: 'is-danger',
+        message: 'Your IP has changed, you must login again.'
+      })
     }
   }
   return next()
