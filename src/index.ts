@@ -25,6 +25,7 @@ import * as Sentry from '@sentry/node'
 import morgan from 'morgan'
 import Logger from 'logdna'
 import * as os from 'os'
+import { Banner } from './database/entities/Banner'
 dotenv.config()
 
 // This allows TypeScript to detect our global value
@@ -89,6 +90,16 @@ app.use(
 app.use(async (req, res, next) => {
   // banners
   res.locals.banners = []
+
+  const banners = await Banner.find({
+    where: {
+      enabled: true
+    }
+  })
+  res.locals.banners = banners.map(banner => ({
+    class: banner.class,
+    message: banner.message
+  }))
 
   return next()
 })
