@@ -1,6 +1,8 @@
 <% if (banners.length > 0) { %> <% banners.map(banner => { %>
   <div class="banner <%= banner.class %>">
-    <%= banner.message %>
+    <p class="content">
+      <%- banner.message %>
+    </p>
   </div>
   <% }) %> <% } %>
 <nav
