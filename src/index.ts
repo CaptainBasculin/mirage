@@ -29,6 +29,7 @@ import { Banner } from './database/entities/Banner'
 import { Server } from 'http'
 import SocketIO from 'socket.io'
 import { initCounts } from './utils/SocketUtil'
+import { Report } from './database/entities/Report'
 dotenv.config()
 
 // This allows TypeScript to detect our global value
@@ -179,6 +180,23 @@ app.use(async (req, res, next) => {
   }
   return next()
 })
+app.use(async (req, res, next) => {
+  if (req.loggedIn && req.user.moderator) {
+    let reports = await Report.find({
+      where: {
+        resolved: false
+      }
+    })
+    if (reports.length > 0) {
+      res.locals.banners.push({
+        class: 'is-warning',
+        message: `There are <strong>${reports.length}</strong> unresolved reports. <a href="/moderator/reports">Review in mod panel</a>`
+      })
+    }
+  }
+  return next()
+})
+
 app.use((req, res, next) => {
   // Active path classes and screenreader functions on res.locals
   res.locals.activePath = (path: string) => req.path == path
