@@ -1,0 +1,29 @@
+<h1 class="title">2-Factor Authentication</h1>
+<div class="content">
+  <p>Please write down your recovery code before continuing</p>
+  <pre><%= recoveryCode %></pre>
+  <p class="has-text-grey">
+    Please make sure you wrote down your recovery code. It is the only way to
+    disable your MFA if you lose your authenticator(s).
+  </p>
+  <a id="confirm-button" href="#" class="button is-warning" disabled>
+    Confirm (25)
+  </a>
+</div>
+
+<script>
+  let i = 25
+  let end = '/account/mfa/complete'
+  let $el = document.getElementById('confirm-button')
+  let interval = setInterval(() => {
+    i--
+    if (i === 0) {
+      $el.href = end
+      $el.innerText = 'Confirm'
+      $el.removeAttribute('disabled')
+      clearInterval(interval)
+    } else {
+      $el.innerText = `Confirm (${i.toString()})`
+    }
+  }, 1000)
+</script>

@@ -8,6 +8,9 @@ import { Image } from '../database/entities/Image'
 import { ShortenedUrl } from '../database/entities/ShortenedUrl'
 import { bucket } from '../utils/StorageUtil'
 import { sendImageNukeCompleted, sendURLNukeCompleted } from '../bot'
+import { rword } from 'rword'
+import speakeasy from 'speakeasy'
+import qrcode from 'qrcode'
 const AccountRouter = express.Router()
 AccountRouter.use(
   bodyParser.urlencoded({
@@ -274,6 +277,74 @@ AccountRouter.route('/urls/nuke')
 
 AccountRouter.route('/upload').get((req, res) => {
   return res.render('pages/account/upload', {
+    layout: 'layouts/account'
+  })
+})
+
+/* 2fa */
+AccountRouter.route('/mfa').get(async (req, res) => {
+  if (!req.user.mfa_enabled) {
+    let secret = speakeasy.generateSecret({
+      issuer: 'mirage',
+      name: `Mirage (${req.user.username})`
+    })
+    req.session!.mfa_temp_secret = secret.base32
+    let url = await qrcode.toDataURL(secret.otpauth_url!)
+    return res.render('pages/account/mfa/index', {
+      layout: 'layouts/account',
+      secret: secret.base32,
+      qrcode: url
+    })
+  }
+  return res.render('pages/account/mfa/index', { layout: 'layouts/account' })
+})
+
+AccountRouter.route('/mfa/confirm').post(async (req, res) => {
+  let temp_secret = req.session!.mfa_temp_secret
+  let validCode = speakeasy.totp.verify({
+    secret: temp_secret,
+    encoding: 'base32',
+    token: req.body.mfa_code
+  })
+  if (!validCode) {
+    res.locals.banners.push({
+      class: 'is-warning',
+      message: 'MFA code was invalid, try again'
+    })
+    let secret = speakeasy.generateSecret({
+      issuer: 'mirage',
+      name: `Mirage (${req.user.username})`
+    })
+    req.session!.mfa_temp_secret = secret.base32
+    let url = await qrcode.toDataURL(secret.otpauth_url!)
+    return res.render('pages/account/mfa/index', {
+      layout: 'layouts/account',
+      secret: secret.base32,
+      qrcode: url
+    })
+  }
+  let words = rword.generate(20) as string[]
+  req.user.mfa_recovery_code = words.join(' ')
+  await req.user.save()
+  return res.render('pages/account/mfa/confirm', {
+    layout: 'layouts/account',
+    recoveryCode: req.user.mfa_recovery_code
+  })
+})
+
+AccountRouter.route('/mfa/complete').get(async (req, res) => {
+  if (req.user.mfa_enabled || req.user.mfa_totp_enabled) {
+    return res.redirect('/account/mfa')
+  }
+  req.user.mfa_enabled = true
+  req.user.mfa_totp_enabled = true
+  req.user.mfa_totp_secret = req.session!.mfa_temp_secret
+  await req.user.save()
+  res.locals.banners.push({
+    class: 'is-success',
+    message: '2FA was successfully enabled'
+  })
+  return res.render('pages/account/mfa/complete', {
     layout: 'layouts/account'
   })
 })

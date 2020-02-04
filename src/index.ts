@@ -196,6 +196,20 @@ app.use(async (req, res, next) => {
   }
   return next()
 })
+app.use(async (req, res, next) => {
+  if (
+    req.loggedIn &&
+    (req.user.moderator || req.user.admin) &&
+    !req.user.mfa_enabled
+  ) {
+    res.locals.banners.push({
+      class: 'is-danger',
+      message:
+        'You must configure mfa before performing any moderation actions. <a href="/account/mfa">Configure your mfa settings</a>'
+    })
+  }
+  return next()
+})
 
 app.use((req, res, next) => {
   // Active path classes and screenreader functions on res.locals
