@@ -110,6 +110,11 @@ export class User extends BaseEntity {
   })
   mfa_totp_secret?: string
 
+  @Column({
+    nullable: true
+  })
+  mfa_recovery_code?: string
+
   serialize() {
     return {
       id: this.id,
@@ -131,7 +136,9 @@ export class User extends BaseEntity {
       discord: this.discord,
       inviteCreator: this.inviteCreator,
       availableInvites: this.availableInvites,
-      invisibleShortIds: this.invisibleShortIds
+      invisibleShortIds: this.invisibleShortIds,
+      mfa_enabled: this.mfa_enabled,
+      mfa_totp_enabled: this.mfa_totp_enabled
     }
   }
 }
