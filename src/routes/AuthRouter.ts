@@ -308,6 +308,7 @@ AuthRouter.route('/forgot_password_prompt')
 AuthRouter.route('/logout').get((req, res) => {
   delete req.user
   delete req.session!.user
+  req.session!.mfa_jail = undefined
   req.session!.loggedIn = false
   return res.redirect('/')
 })
@@ -341,5 +342,29 @@ AuthRouter.route('/jail/totp').post(async (req, res) => {
   req.flash('is-success', 'Logged in successfully')
   return res.redirect('/account')
 })
+AuthRouter.route('/jail/disable')
+  .get((req, res) => {
+    if (req.loggedIn) {
+      return res.redirect('/account')
+    }
+    return res.render('pages/auth/mfa_disable')
+  })
+  .post(async (req, res) => {
+    let user = req.user
 
+    let valid = user.mfa_recovery_code! === req.body.recovery_code
+    if (!valid) {
+      req.flash('is-danger', 'Recovery code is invalid')
+      return res.redirect('/auth/jail')
+    }
+    req.session!.user = user.id
+    req.session!.loggedIn = true
+    req.session!.ip = req.ip
+    req.user.mfa_enabled = false
+    req.user.mfa_totp_enabled = false
+    await req.user.save()
+    req.flash('is-warning', '2FA was disabled, please re-configure it')
+    req.flash('is-success', 'Logged in successfully')
+    return res.redirect('/account/mfa')
+  })
 export default AuthRouter
