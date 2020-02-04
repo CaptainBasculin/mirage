@@ -95,6 +95,21 @@ export class User extends BaseEntity {
   })
   discord: string
 
+  @Column({
+    default: false
+  })
+  mfa_enabled: boolean
+
+  @Column({
+    default: false
+  })
+  mfa_totp_enabled: boolean
+
+  @Column({
+    nullable: true
+  })
+  mfa_totp_secret?: string
+
   serialize() {
     return {
       id: this.id,

@@ -59,11 +59,13 @@
     "multer": "^1.4.2",
     "node-fetch": "^2.6.0",
     "pg": "^7.12.1",
+    "qrcode": "^1.4.4",
     "randomstring": "^1.1.5",
     "raw-body": "^2.4.1",
     "redis": "^2.8.0",
     "reflect-metadata": "^0.1.13",
     "socket.io": "^2.3.0",
+    "speakeasy": "^2.0.0",
     "typeorm": "^0.2.18",
     "useragent": "^2.3.0",
     "uuid": "^3.3.3"
