@@ -349,4 +349,20 @@ AccountRouter.route('/mfa/complete').get(async (req, res) => {
   })
 })
 
+AccountRouter.route('/mfa/disable').post(async (req, res) => {
+  if (!req.user.mfa_enabled) {
+    req.flash('is-danger', '2FA not enabled')
+    return res.redirect('/account/mfa')
+  }
+  if (req.user.mfa_recovery_code! !== req.body.recovery_code) {
+    req.flash('is-danger', 'Recovery code invalid, try again')
+    return res.redirect('/account/mfa')
+  }
+  req.user.mfa_enabled = false
+  req.user.mfa_totp_enabled = false
+  await req.user.save()
+  req.flash('is-success', '2FA was disabled successfully')
+  return res.redirect('/account/mfa')
+})
+
 export default AccountRouter

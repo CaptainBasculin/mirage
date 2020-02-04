@@ -1,0 +1,20 @@
+<div class="content">
+  <p>Please enter your recovery code to disable 2FA</p>
+  <form action="/account/mfa/disable" method="POST">
+    <div class="field">
+      <label class="label">Recovery Code</label>
+      <textarea
+        name="recovery_code"
+        class="textarea"
+        autocomplete="off"
+        required
+      ></textarea>
+    </div>
+    <p class="has-text-grey">
+      This is an irreversible action. Please setup 2FA again after logging in.
+    </p>
+    <div class="field">
+      <button type="submit" class="button is-danger">Disable</button>
+    </div>
+  </form>
+</div>
