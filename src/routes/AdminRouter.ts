@@ -23,6 +23,10 @@ function authMiddleware(req: Request, res: Response, next: NextFunction) {
   if (!req.user.admin) {
     return res.status(401).send('Not an admin')
   }
+  if (!req.user.mfa_enabled) {
+    req.flash('is-danger', 'You must enable 2FA to access this section')
+    return res.status(401).redirect('/account/mfa')
+  }
   return next()
 }
 
