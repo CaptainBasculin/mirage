@@ -94,6 +94,15 @@ app.use(
     saveUninitialized: true
   })
 )
+
+app.use((req, res, next) => {
+  req.flash = (clazz: string, message: string) => {
+    req.session!.flashes = req.session!.flashes || []
+    req.session!.flashes.push({ class: clazz, message })
+  }
+  return next()
+})
+
 app.use(async (req, res, next) => {
   // banners
   res.locals.banners = []
@@ -107,6 +116,11 @@ app.use(async (req, res, next) => {
     class: banner.class,
     message: banner.message
   }))
+
+  if (req.session!.flashes) {
+    res.locals.banners = res.locals.banners.concat(req.session!.flashes)
+    req.session!.flashes = undefined
+  }
 
   return next()
 })
@@ -136,6 +150,16 @@ app.use(async (req, res, next) => {
     res.locals.profile = req.user.serialize()
   } else {
     req.loggedIn = false
+  }
+
+  if (req.session!.mfa_jail) {
+    let user = await User.findOne({
+      where: {
+        id: req.session!.user
+      }
+    })
+    if (!user) return next()
+    req.user = user
   }
   res.locals.loggedIn = req.loggedIn
   if (req.loggedIn) {

@@ -7,6 +7,7 @@ import sgMail from '@sendgrid/mail'
 import { Invite } from '../database/entities/Invite'
 import { userCreated, userLogin } from '../bot'
 import { increaseUser } from '../utils/SocketUtil'
+import speakeasy from 'speakeasy'
 const AuthRouter = express.Router()
 
 AuthRouter.use(
@@ -70,6 +71,14 @@ AuthRouter.route('/login')
           suspended: user.suspensionReason
         }
       })
+    }
+
+    if (user.mfa_enabled) {
+      req.session!.user = user.id
+      req.session!.ip = req.ip
+      req.session!.mfa_jail = true
+      req.session!.loggedIn = false
+      return res.redirect('/auth/jail')
     }
 
     req.session!.user = user.id
@@ -301,6 +310,36 @@ AuthRouter.route('/logout').get((req, res) => {
   delete req.session!.user
   req.session!.loggedIn = false
   return res.redirect('/')
+})
+
+AuthRouter.route('/jail').get((req, res) => {
+  if (req.loggedIn) {
+    return res.redirect('/account')
+  }
+  return res.render('pages/auth/mfa_totp')
+})
+
+AuthRouter.route('/jail/totp').post(async (req, res) => {
+  let user = req.user
+  if (!user.mfa_totp_enabled) {
+    req.flash('is-danger', 'TOTP not enabled')
+    return res.redirect('/auth/jail')
+  }
+  let secret = user.mfa_totp_secret!
+  let valid = speakeasy.totp.verify({
+    secret,
+    encoding: 'base32',
+    token: req.body.mfa_code
+  })
+  if (!valid) {
+    req.flash('is-danger', '2FA code is not valid, try again')
+    return res.redirect('/auth/jail')
+  }
+  req.session!.user = user.id
+  req.session!.loggedIn = true
+  req.session!.ip = req.ip
+  req.flash('is-success', 'Logged in successfully')
+  return res.redirect('/account')
 })
 
 export default AuthRouter

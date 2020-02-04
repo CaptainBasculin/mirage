@@ -1,0 +1,23 @@
+<div class="container">
+  <h1 class="title">2-Factor Authentication</h1>
+  <div class="content">
+    <p>Please enter your 2FA code from your mobile authenticator.</p>
+    <form action="/auth/jail/totp" method="POST">
+      <div class="field">
+        <label class="label">2FA Code</label>
+        <input
+          name="mfa_code"
+          class="input"
+          type="number"
+          maxlength="6"
+          autocomplete="off"
+          required
+        />
+      </div>
+
+      <div class="field">
+        <button type="submit" class="button is-primary">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
