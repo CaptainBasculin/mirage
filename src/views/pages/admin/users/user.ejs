@@ -54,10 +54,10 @@
   <p>
     Invite banned?:
     <strong class="has-text-<%= user.inviteBanned ? 'danger' : 'siccess' %>">
-      <%= inviteBanned ? 'YES' : 'NO' %>
+      <%= user.inviteBanned ? 'YES' : 'NO' %>
     </strong>
   </p>
-  <% if (user.inviteBanned) { %>
+  <% if (!user.inviteBanned) { %>
   <a
     class="button is-warning"
     href="/admin/users/<%= user.username %>/invite_ban"
