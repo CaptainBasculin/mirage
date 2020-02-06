@@ -8,7 +8,11 @@
   <a href="/legal/guidelines#invites">Account Holder Guidelines</a> for more
   information
 </p>
-<% if ((profile.availableInvites || 0) > 0) { %>
+<% if (profile.inviteBanned) { %>
+<p class="has-text-danger">
+  You have been banned from creating invitation codes.
+</p>
+<% } else { %> <% if ((profile.availableInvites || 0) > 0) { %>
 <p class="content">
   You have <strong><%= profile.availableInvites %></strong> invites left to
   create.
@@ -50,3 +54,4 @@
     <% }) %>
   </tbody>
 </table>
+<% } %>
