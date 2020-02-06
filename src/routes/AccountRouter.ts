@@ -140,6 +140,13 @@ AccountRouter.route('/invites/create').post(async (req, res) => {
   ) {
     return res.redirect('/account/invites')
   }
+  if (req.user.inviteBanned) {
+    req.flash(
+      'is-danger',
+      'You were invite banned and cannot create new invites'
+    )
+    return res.redirect('/account/invites')
+  }
   if (!req.user.admin || !req.user.moderator || !req.user.inviteCreator) {
     req.user.availableInvites = req.user.availableInvites - 1
     await req.user.save()
