@@ -44,7 +44,9 @@ LegalRouter.route(['/privacy', '/privacypolicy', '/privacy_policy']).get(
     res.render('pages/legal/privacy')
   }
 )
-
+LegalRouter.route(['/guidelines', '/rules']).get((req, res) => {
+  res.render('pages/legal/guidelines')
+})
 LegalRouter.route('/report')
   .get((req, res) => {
     return res.render('pages/legal/report', {
