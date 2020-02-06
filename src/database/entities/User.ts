@@ -115,6 +115,11 @@ export class User extends BaseEntity {
   })
   mfa_recovery_code?: string
 
+  @Column({
+    default: false
+  })
+  inviteBanned: boolean
+
   serialize() {
     return {
       id: this.id,
@@ -138,7 +143,8 @@ export class User extends BaseEntity {
       availableInvites: this.availableInvites,
       invisibleShortIds: this.invisibleShortIds,
       mfa_enabled: this.mfa_enabled,
-      mfa_totp_enabled: this.mfa_totp_enabled
+      mfa_totp_enabled: this.mfa_totp_enabled,
+      inviteBanned: this.inviteBanned
     }
   }
 }
