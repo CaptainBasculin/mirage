@@ -49,6 +49,30 @@
 </form>
 <% } %>
 
+<h1 class="title">Invite System</h1>
+<div class="content">
+  <p>
+    Invite banned?:
+    <strong class="has-text-<%= user.inviteBanned ? 'danger' : 'siccess' %>">
+      <%= inviteBanned ? 'YES' : 'NO' %>
+    </strong>
+  </p>
+  <% if (user.inviteBanned) { %>
+  <a
+    class="button is-warning"
+    href="/admin/users/<%= user.username %>/invite_ban"
+  >
+    Invite Ban
+  </a>
+  <% } else { %>
+  <a
+    class="button is-warning"
+    href="/admin/users/<%= user.username %>/invite_unban"
+  >
+    Un-invite ban
+  </a>
+  <% } %>
+</div>
 <h1 class="title">Invitations for User</h1>
 
 <div class="content">

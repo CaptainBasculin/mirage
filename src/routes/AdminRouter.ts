@@ -286,6 +286,38 @@ AdminRouter.route('/users/:id/unsuspend').post(async (req, res) => {
   )
 })
 
+AdminRouter.route('/users/:id/invite_ban').get(async (req, res) => {
+  let user = await User.findOne({
+    where: {
+      username: req.params.id
+    },
+    relations: ['invites', 'images', 'urls']
+  })
+  if (!user) {
+    return res.status(404)
+  }
+  user.inviteBanned = true
+  await user.save()
+  req.flash('is-success', 'User was banned from the invite system')
+  return res.redirect(`/admin/users/${user.username}`)
+})
+
+AdminRouter.route('/users/:id/invite_unban').get(async (req, res) => {
+  let user = await User.findOne({
+    where: {
+      username: req.params.id
+    },
+    relations: ['invites', 'images', 'urls']
+  })
+  if (!user) {
+    return res.status(404)
+  }
+  user.inviteBanned = false
+  await user.save()
+  req.flash('is-success', 'User was unbanned from the invite system')
+  return res.redirect(`/admin/users/${user.username}`)
+})
+
 AdminRouter.route('/banners').get(async (req, res) => {
   let _banners = await Banner.find({})
   let banners = _banners.map(banner => banner.serialize())
