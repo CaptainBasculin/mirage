@@ -9,7 +9,9 @@
   </head>
   <body>
     <div class="content-main">
-      <% include ../includes/navbar %>
+      <% include ../includes/navbar %> <% if (!originalUrlEq('/')) { %>
+      <br />
+      <% } %>
       <div>
         <%- body %>
       </div>
