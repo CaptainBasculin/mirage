@@ -95,11 +95,7 @@ AccountRouter.route('/urlshortener')
 
 AccountRouter.route('/discord').get((req, res) => {
   res.render('pages/account/discord', {
-    layout: 'layouts/account',
-    query: req.query || {
-      message: false,
-      class: false
-    }
+    layout: 'layouts/account'
   })
 })
 
@@ -167,11 +163,7 @@ AccountRouter.route('/images').get((req, res) => {
   res.locals.profile.images = res.locals.profile.images.reverse()
   res.render('pages/account/images/index', {
     layout: 'layouts/account',
-    images: res.locals.profile.images.filter((image: Image) => !image.deleted),
-    query: req.query || {
-      message: false,
-      class: false
-    }
+    images: res.locals.profile.images.filter((image: Image) => !image.deleted)
   })
 })
 AccountRouter.route('/images/nuke')
@@ -227,11 +219,7 @@ AccountRouter.route('/urls').get((req, res) => {
   res.locals.profile.urls = res.locals.profile.urls.reverse()
   res.render('pages/account/urls/index', {
     layout: 'layouts/account',
-    urls: res.locals.profile.urls.filter((url: ShortenedUrl) => !url.deleted),
-    query: req.query || {
-      message: false,
-      class: false
-    }
+    urls: res.locals.profile.urls.filter((url: ShortenedUrl) => !url.deleted)
   })
 })
 AccountRouter.route('/urls/:id/delete').get(async (req, res) => {

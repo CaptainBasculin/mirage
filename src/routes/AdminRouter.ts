@@ -44,11 +44,7 @@ AdminRouter.route('/invites').get(async (req, res) => {
   })
   res.render('pages/admin/invites', {
     layout: 'layouts/admin',
-    invites: invites.map(invite => invite.adminSerialize()).reverse(),
-    query: req.query || {
-      message: false,
-      class: false
-    }
+    invites: invites.map(invite => invite.adminSerialize()).reverse()
   })
 })
 AdminRouter.route('/invites/wave').get(async (req, res) => {
@@ -67,11 +63,7 @@ AdminRouter.route('/images').get(async (req, res) => {
   })
   res.render('pages/admin/images', {
     layout: 'layouts/admin',
-    images: images.map(image => image.serialize()).reverse(),
-    query: req.query || {
-      message: false,
-      class: false
-    }
+    images: images.map(image => image.serialize()).reverse()
   })
 })
 AdminRouter.route('/images/:id/delete').get(async (req, res) => {
@@ -107,11 +99,7 @@ AdminRouter.route('/urls').get(async (req, res) => {
   })
   res.render('pages/admin/urls', {
     layout: 'layouts/admin',
-    urls: urls.map(url => url.serialize()).reverse(),
-    query: req.query || {
-      message: false,
-      class: false
-    }
+    urls: urls.map(url => url.serialize()).reverse()
   })
 })
 AdminRouter.route('/urls/:id/delete').get(async (req, res) => {
@@ -167,11 +155,7 @@ AdminRouter.route('/users/:id').get(async (req, res) => {
   serialized.urls = serialized.urls.reverse()
   res.render('pages/admin/users/user', {
     layout: 'layouts/admin',
-    user: user!.serialize(),
-    query: req.query || {
-      message: false,
-      class: false
-    }
+    user: user!.serialize()
   })
 })
 
@@ -322,21 +306,13 @@ AdminRouter.route('/banners').get(async (req, res) => {
   let banners = _banners.map(banner => banner.serialize())
   return res.render('pages/admin/banners/index', {
     layout: 'layouts/admin',
-    banners,
-    query: req.query || {
-      message: false,
-      class: false
-    }
+    banners
   })
 })
 AdminRouter.route('/banners/create')
   .get((req, res) => {
     return res.render('pages/admin/banners/create', {
-      layout: 'layouts/admin',
-      query: req.query || {
-        message: false,
-        class: false
-      }
+      layout: 'layouts/admin'
     })
   })
   .post(async (req, res) => {
@@ -358,11 +334,7 @@ AdminRouter.route('/banners/:id')
     })
     return res.render('pages/admin/banners/banner', {
       layout: 'layouts/admin',
-      banner: banner!.serialize(),
-      query: req.query || {
-        message: false,
-        class: false
-      }
+      banner: banner!.serialize()
     })
   })
   .post(async (req, res) => {
