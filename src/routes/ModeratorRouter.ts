@@ -86,9 +86,8 @@ ModeratorRouter.route('/reports/:id/resolve').get(async (req, res) => {
   report.resolved = true
   report.resolvedBy = req.user.id
   await report.save()
-  return res.redirect(
-    `/moderator/reports/${req.params.id}?message=Report resolved successfully&class=is-success`
-  )
+  req.flash('is-success', `Report ${report.id} set to resolved`)
+  return res.redirect(`/moderator/reports/${req.params.id}`)
 })
 
 ModeratorRouter.route('/images')
@@ -131,18 +130,19 @@ ModeratorRouter.route('/images/:id/delete').get(async (req, res) => {
     relations: ['uploader']
   })
   if (!image) {
-    return res.redirect(
-      '/moderator/images?message=Image does not exist&class=is-danger'
-    )
+    req.flash('is-danger', 'Image does not exist')
+    return res.redirect('/moderator/images')
   }
   await bucket.file(image.path).delete()
   image.deleted = true
   image.deletionReason = req.query.type || 'LEGAL'
   await image.save()
   await moderatorImageDelete(image, req.user, req.ip)
-  return res.redirect(
-    `/moderator/images/${image.shortId}?message=Image ${image.path} was deleted with reason ${image.deletionReason}&class=is-success`
+  req.flash(
+    'is-success',
+    `Image ${image.path} was deleted with reason ${image.deletionReason}`
   )
+  return res.redirect(`/moderator/images/${image.shortId}`)
 })
 
 export default ModeratorRouter

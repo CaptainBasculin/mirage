@@ -213,15 +213,15 @@ AccountRouter.route('/images/:id/delete').get(async (req, res) => {
     }
   })
   if (!image) {
-    return res.redirect('/account/images?message=No access&class=is-danger')
+    req.flash('is-danger', 'No access')
+    return res.redirect('/account/images')
   }
   await bucket.file(image.path).delete()
   image.deleted = true
   image.deletionReason = 'USER'
   await image.save()
-  return res.redirect(
-    `/account/images?message=Image ${image.path} was deleted&class=is-success`
-  )
+  req.flash('is-success', `Image ${image.path} was deleted`)
+  return res.redirect(`/account/images`)
 })
 AccountRouter.route('/urls').get((req, res) => {
   res.locals.profile.urls = res.locals.profile.urls.reverse()
@@ -242,14 +242,15 @@ AccountRouter.route('/urls/:id/delete').get(async (req, res) => {
     }
   })
   if (!url) {
-    return res.redirect('/account/urls?message=No access&class=is-danger')
+    req.flash('is-danger', 'No access')
+    return res.redirect('/account/urls')
   }
   url.deleted = true
   url.deletionReason = 'USER'
   await url.save()
-  return res.redirect(
-    `/account/urls?message=URL ${url.shortId} was deleted&class=is-success`
-  )
+  req.flash('is-success', `URL ${url.shortId} was deleted`)
+
+  return res.redirect(`/account/urls`)
 })
 AccountRouter.route('/urls/nuke')
   .get((req, res) => {

@@ -87,10 +87,11 @@ OAuthRouter.route('/discord/redirect').get(async (req, res) => {
     )
   }
   await linkUser(req.user, userJson.id)
-
-  return res.redirect(
-    `/account/discord?message=Sucessfully linked discord ${userJson.username}#${userJson.discriminator} to your account&class=is-success`
+  req.flash(
+    'is-success',
+    `Sucessfully linked discord ${userJson.username}#${userJson.discriminator} to your account`
   )
+  return res.redirect(`/account/discord`)
 })
 
 export default OAuthRouter

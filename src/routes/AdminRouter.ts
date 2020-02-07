@@ -58,9 +58,8 @@ AdminRouter.route('/invites/wave').get(async (req, res) => {
     user.availableInvites = user.availableInvites + 1
     user.save()
   })
-  return res.redirect(
-    '/admin/invites?message=Invite wave was started&class=is-success'
-  )
+  req.flash('is-success', 'Invite wave was started')
+  return res.redirect('/admin/invites')
 })
 AdminRouter.route('/images').get(async (req, res) => {
   let images = await Image.find({
@@ -83,22 +82,23 @@ AdminRouter.route('/images/:id/delete').get(async (req, res) => {
     relations: ['uploader']
   })
   if (!image) {
-    return res.redirect(
-      '/admin/images?message=Image does not exist&class=is-danger'
-    )
+    req.flash('is-danger', 'Image does not exist')
+    return res.redirect('/admin/images')
   }
   await bucket.file(image.path).delete()
   image.deleted = true
   image.deletionReason = req.query.type || 'LEGAL'
   await image.save()
+  req.flash(
+    'is-success',
+    `Image ${image.path} was deleted with reason ${image.deletionReason}`
+  )
   return res.redirect(
     `${
       (req.query.loc || 'admin') === 'admin'
         ? '/admin/images'
         : `/admin/users/${image.uploader.username}`
-    }?message=Image ${image.path} was deleted with reason ${
-      image.deletionReason
-    }&class=is-success`
+    }`
   )
 })
 AdminRouter.route('/urls').get(async (req, res) => {
@@ -122,21 +122,22 @@ AdminRouter.route('/urls/:id/delete').get(async (req, res) => {
     relations: ['creator']
   })
   if (!url) {
-    return res.redirect(
-      '/admin/urls?message=Shortened URL does not exist&class=is-danger'
-    )
+    req.flash('is-danger', 'Shortened URL does not exist')
+    return res.redirect('/admin/urls')
   }
   url.deleted = true
   url.deletionReason = req.query.type || 'LEGAL'
   await url.save()
+  req.flash(
+    'is-success',
+    `URL ${url.shortId} was deleted with reason ${url.deletionReason}`
+  )
   return res.redirect(
     `${
       (req.query.loc || 'admin') === 'admin'
         ? '/admin/urls'
         : `/admin/users/${url.creator.username}`
-    }?message=URL ${url.shortId} was deleted with reason ${
-      url.deletionReason
-    }&class=is-success`
+    }`
   )
 })
 
@@ -193,9 +194,8 @@ AdminRouter.route('/users/:id/grant_invite').get(async (req, res) => {
     subject: 'Mirage: you were granted an invite by an administrator',
     html: `Hello, ${user.username}!<br/>Congratulations, you have been granted an invite by an administrator.<br/>Your new available invitation count is: <strong>${user.availableInvites}</strong>`
   })
-  return res.redirect(
-    `/admin/users/${user.username}?message=User was granted an invite&class=is-success`
-  )
+  req.flash('is-success', 'User was granted an invite')
+  return res.redirect(`/admin/users/${user.username}`)
 })
 
 AdminRouter.route('/users/:id/remove_invite').get(async (req, res) => {
@@ -213,9 +213,8 @@ AdminRouter.route('/users/:id/remove_invite').get(async (req, res) => {
     user.availableInvites = 0
   }
   await user.save()
-  return res.redirect(
-    `/admin/users/${user.username}?message=User's invite was removed&class=is-success`
-  )
+  req.flash('is-success', "User's invite was removed")
+  return res.redirect(`/admin/users/${user.username}`)
 })
 
 AdminRouter.route('/users/:id/toggle_creator').get(async (req, res) => {
@@ -231,9 +230,11 @@ AdminRouter.route('/users/:id/toggle_creator').get(async (req, res) => {
   user.inviteCreator = !user.inviteCreator
 
   await user.save()
-  return res.redirect(
-    `/admin/users/${user.username}?message=User's invite creator status is now: ${user.inviteCreator}&class=is-success`
+  req.flash(
+    'is-success',
+    `User's invite creator status is now: ${user.inviteCreator}`
   )
+  return res.redirect(`/admin/users/${user.username}`)
 })
 
 AdminRouter.route('/users/:id/suspend').post(async (req, res) => {
@@ -256,9 +257,8 @@ AdminRouter.route('/users/:id/suspend').post(async (req, res) => {
     subject: 'Mirage: your account was suspended',
     html: `Hello, ${user.username}!<br/>Your account was suspended.<br/>You were suspended for the reason:<br/>${user.suspensionReason}<br/><br/><br/>Until your suspension is lifted, you may not do the following:<ul><li>Upload images</li><li>Create, use, or distribute invites</li><li>Create shortened URLs</li><li>Login to the account panel</li></ul>.<br/>Contact a staff member on the Discord if you would like to dispute this decision.`
   })
-  return res.redirect(
-    `/admin/users/${user.username}?message=User was sucessfully suspended&class=is-success`
-  )
+  req.flash('is-success', 'User was successfully suspended')
+  return res.redirect(`/admin/users/${user.username}`)
 })
 
 AdminRouter.route('/users/:id/unsuspend').post(async (req, res) => {
@@ -281,9 +281,8 @@ AdminRouter.route('/users/:id/unsuspend').post(async (req, res) => {
     subject: 'Mirage: your suspension was lifted',
     html: `Hello, ${user.username}!<br/>Your account's suspension was lifted.<br/>You now have any privileges you had before your account was suspended.<br/>If any of your images were unavailable while you were suspended, you now have access to view them.<br/>We are sorry for the inconvenience.`
   })
-  return res.redirect(
-    `/admin/users/${user.username}?message=User was sucessfully unsuspended&class=is-success`
-  )
+  req.flash('is-success', 'User was successfully unsuspended')
+  return res.redirect(`/admin/users/${user.username}`)
 })
 
 AdminRouter.route('/users/:id/invite_ban').get(async (req, res) => {
@@ -383,9 +382,8 @@ AdminRouter.route('/banners/:id')
         : false
       : false
     await banner.save()
-    return res.redirect(
-      `/admin/banners/${req.params.id}?class=is-success&message=Banner successfully updated`
-    )
+    req.flash('is-success', 'Banner successfully updated')
+    return res.redirect(`/admin/banners/${req.params.id}`)
   })
 
 AdminRouter.route('/banners/:id/delete').get(async (req, res) => {
@@ -395,11 +393,11 @@ AdminRouter.route('/banners/:id/delete').get(async (req, res) => {
     }
   })
   if (!banner) {
-    return res.redirect(
-      '/admin/banners?message=Banner does not exist&class=is-danger'
-    )
+    req.flash('is-danger', 'Banner does not exist')
+    return res.redirect('/admin/banners')
   }
   await banner.remove()
-  return res.redirect('/admin/banners?message=Banner deleted&class=is-success')
+  req.flash('is-success', 'Banner deleted')
+  return res.redirect('/admin/banners')
 })
 export default AdminRouter
