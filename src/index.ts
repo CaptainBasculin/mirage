@@ -95,6 +95,8 @@ app.use(
   })
 )
 
+app.use(express.static(path.join(__dirname, 'static')))
+
 app.use((req, res, next) => {
   req.flash = (clazz: string, message: string) => {
     req.session!.flashes = req.session!.flashes || []

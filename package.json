@@ -1,6 +1,6 @@
 {
   "name": "mirage",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Mirage.photos website",
   "main": "dist/index.js",
   "author": "Seth Stephens <seth@sethstephens.me>",
@@ -9,7 +9,9 @@
   "scripts": {
     "build": "yarn build:typescript && yarn build:copy",
     "build:typescript": "tsc -p tsconfig.production.json",
-    "build:copy": "copyfiles --up 1 src/**/*.ejs dist/",
+    "build:copy": "yarn build:copy:ejs && yarn build:copy:static",
+    "build:copy:ejs": "copyfiles --up 1 src/**/*.ejs dist/",
+    "build:copy:static": "copyfiles --up 1 src/static/**/* dist/",
     "start": "node dist/index.js",
     "dev": "ts-node-dev src/index.ts"
   },
