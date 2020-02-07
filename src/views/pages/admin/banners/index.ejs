@@ -3,17 +3,6 @@
   View banners
 </h2>
 
-<% if (query.message) { %>
-<article class="message <%= query.class %>">
-  <div class="message-header">
-    <p>Message</p>
-  </div>
-  <div class="message-body">
-    <%= query.message %>
-  </div>
-</article>
-<% } %>
-
 <a href="/admin/banners/create" class="button is-primary">Create</a>
 
 <table class="table is-hoverable is-fullwidth is-striped">

@@ -2,16 +2,6 @@
 <h2 class="subtitle">
   View all of the invites on the instance
 </h2>
-<% if (query.message) { %>
-<article class="message <%= query.class %>">
-  <div class="message-header">
-    <p>Message</p>
-  </div>
-  <div class="message-body">
-    <%= query.message %>
-  </div>
-</article>
-<% } %>
 
 <a class="button is-warning" href="/admin/invites/wave">Invite Wave</a>
 <table class="table is-hoverable is-fullwidth is-striped">

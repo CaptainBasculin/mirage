@@ -3,17 +3,6 @@
   Create a global banner
 </h2>
 
-<% if (query.message) { %>
-<article class="message <%= query.class %>">
-  <div class="message-header">
-    <p>Message</p>
-  </div>
-  <div class="message-body">
-    <%= query.message %>
-  </div>
-</article>
-<% } %>
-
 <a href="/admin/banners" class="button is-link">Back to Listing</a>
 
 <form method="POST">
