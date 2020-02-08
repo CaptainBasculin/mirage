@@ -31,9 +31,26 @@ const upload = multer({
 async function uploadImage(
   host: string,
   user: User,
-  file: Express.Multer.File
+  file: Express.Multer.File,
+  useOriginalName: boolean
 ): Promise<Image> {
-  let randomId = randomImageId(user.longNames)
+  if (!user.admin) {
+    useOriginalName = false
+  }
+  let randomId = useOriginalName
+    ? file.originalname.split('.')[0]
+    : randomImageId(user.longNames)
+
+  if (useOriginalName) {
+    let files = await Image.find({
+      where: {
+        shortId: randomId
+      }
+    })
+    if (files.length > 0) {
+      throw new Error('Short id already exists in db')
+    }
+  }
   let image = new Image()
   image.id = randomUserId()
   image.shortId = randomId
@@ -74,10 +91,12 @@ ApiRouter.route('/upload').post(upload.single('file'), async (req, res) => {
   let image = await uploadImage(
     req.body.host || req.hostname || 'mirage.re',
     user,
-    req.file
+    req.file,
+    req.body.useOriginalName === '1'
   )
   return res.send(image.url)
 })
+
 ApiRouter.route('/upload/site').post(
   upload.single('file'),
   async (req, res) => {
@@ -90,7 +109,12 @@ ApiRouter.route('/upload/site').post(
         .status(401)
         .send('User is suspended, check email for more information')
     }
-    let image = await uploadImage('mirage.wtf', user, req.file)
+    let image = await uploadImage(
+      'mirage.wtf',
+      user,
+      req.file,
+      req.body.useOriginalName === '1'
+    )
     return res.send(image.url)
   }
 )
@@ -115,7 +139,8 @@ ApiRouter.route('/upload/shortcuts/:host/:key').post(
     let image = await uploadImage(
       req.params.host || req.hostname || 'mirage.re',
       user,
-      req.file
+      req.file,
+      req.body.useOriginalName === '1'
     )
     return res.send(image.url)
   }
@@ -140,7 +165,8 @@ ApiRouter.route('/upload/pomf/:key').post(
     let image = await uploadImage(
       req.body.host || req.hostname || 'mirage.re',
       user,
-      req.file
+      req.file,
+      req.body.useOriginalName === '1'
     )
     return res.json({
       success: true,
