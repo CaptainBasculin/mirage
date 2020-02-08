@@ -57,7 +57,6 @@ OAuthRouter.route('/discord/redirect').get(async (req, res) => {
     }
   })
   const userJson = await userRes.json()
-
   const guildRes = await fetch(
     'https://discordapp.com/api/v6/users/@me/guilds',
     {
@@ -81,7 +80,8 @@ OAuthRouter.route('/discord/redirect').get(async (req, res) => {
           roles: [process.env.DISCORD_MEMBER!]
         }),
         headers: {
-          'content-type': 'application/json'
+          'content-type': 'application/json',
+          authorization: `Bot ${process.env.DISCORD_TOKEN!}`
         }
       }
     )
