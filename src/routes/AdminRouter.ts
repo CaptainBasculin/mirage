@@ -130,9 +130,8 @@ AdminRouter.route('/urls/:id/delete').get(async (req, res) => {
 })
 
 AdminRouter.route('/users').get(async (req, res) => {
-  let users = await User.find({
-    relations: ['invites', 'images']
-  })
+  let users = await User.find()
+  //users = users.sort((a, b) => a.id - b.id)
   res.render('pages/admin/users/index', {
     layout: 'layouts/admin',
     users: users.map(user => user.serialize())
@@ -143,16 +142,11 @@ AdminRouter.route('/users/:id').get(async (req, res) => {
   let user = await User.findOne({
     where: {
       username: req.params.id
-    },
-    relations: ['invites', 'images', 'urls']
+    }
   })
   if (!user) {
     return res.status(404)
   }
-  let serialized = user!.serialize()
-  serialized.images = serialized.images.reverse()
-  serialized.invites = serialized.invites.reverse()
-  serialized.urls = serialized.urls.reverse()
   res.render('pages/admin/users/user', {
     layout: 'layouts/admin',
     user: user!.serialize()

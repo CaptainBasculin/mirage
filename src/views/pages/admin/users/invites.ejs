@@ -1,0 +1,27 @@
+<h1 class="title">Invites</h1>
+
+<table class="table is-hoverable is-fullwidth is-striped">
+  <thead>
+    <tr>
+      <th>Invite</th>
+      <th>Created on</th>
+      <th>Redeemed</th>
+      <th>Redeemed By</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% user.invites.map(invite => { %>
+    <tr>
+      <td><%= invite.invite %></td>
+      <td><%= invite.createdOn %></td>
+      <td>
+        <% if (invite.redeemed) { %><strong>Yes</strong> <% } else { %> No<% }
+        %>
+      </td>
+      <td>
+        <% if (invite.redeemed) { %> <%= invite.redeemedBy %> <% } %>
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>

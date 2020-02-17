@@ -1,0 +1,45 @@
+<h1 class="title">Images</h1>
+
+<table class="table is-hoverable is-fullwidth is-striped">
+  <thead>
+    <tr>
+      <th>Path</th>
+      <th>Host</th>
+      <th>Upload Date</th>
+      <th>Size</th>
+      <th>Content Type</th>
+      <th>Delete</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% user.images.map(image => { %>
+    <tr>
+      <td><a href="<%= image.url %>"><%= image.path %></a></td>
+      <td><%= image.host %></td>
+      <td><%= image.uploadDate %></td>
+      <td><%= image.size %></td>
+      <td><%= image.contentType %></td>
+      <td>
+        <div class="field is-grouped">
+          <p class="control">
+            <a
+              class="button is-warning"
+              href="/admin/images/<%= image.id %>/delete?type=LEGAL&loc=user"
+            >
+              Legal
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-danger"
+              href="/admin/images/<%= image.id %>/delete?type=COPYRIGHT&loc=user"
+            >
+              Copyright
+            </a>
+          </p>
+        </div>
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
