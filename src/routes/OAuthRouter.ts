@@ -65,6 +65,26 @@ OAuthRouter.route('/discord/redirect').get(async (req, res) => {
       }
     }
   )
+  let roles = [process.env.DISCORD_MEMBER!]
+  if (req.user.moderator) {
+    roles.push(process.env.DISCORD_MODERATOR!)
+  }
+  if (req.user.alpha) {
+    roles.push(process.env.DISCORD_ALPHA!)
+  }
+  if (req.user.beta) {
+    roles.push(process.env.DISCORD_BETA!)
+  }
+  if (req.user.contributor) {
+    roles.push(process.env.DISCORD_CONTRIBUTOR!)
+  }
+  if (req.user.domainDonor) {
+    roles.push(process.env.DISCORD_DONOR!)
+  }
+  if (req.user.trusted) {
+    roles.push(process.env.DISCORD_TRUSTED!)
+  }
+
   const guildJson = await guildRes.json()
   if (
     !guildJson.find((guild: any) => guild.id === process.env.DISCORD_SERVER)
@@ -77,7 +97,7 @@ OAuthRouter.route('/discord/redirect').get(async (req, res) => {
         body: JSON.stringify({
           access_token: tokenJson.access_token,
           nick: req.user.username,
-          roles: [process.env.DISCORD_MEMBER!]
+          roles
         }),
         headers: {
           'content-type': 'application/json',
@@ -86,7 +106,7 @@ OAuthRouter.route('/discord/redirect').get(async (req, res) => {
       }
     )
   }
-  await linkUser(req.user, userJson.id)
+  await linkUser(req.user, userJson.id, roles)
   req.flash(
     'is-success',
     `Sucessfully linked discord ${userJson.username}#${userJson.discriminator} to your account`

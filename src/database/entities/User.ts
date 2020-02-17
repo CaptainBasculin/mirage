@@ -135,6 +135,16 @@ export class User extends BaseEntity {
   })
   beta: boolean
 
+  @Column({
+    default: false
+  })
+  trusted: boolean
+
+  @Column({
+    default: false
+  })
+  contributor: boolean
+
   serialize() {
     return {
       id: this.id,
@@ -159,7 +169,12 @@ export class User extends BaseEntity {
       invisibleShortIds: this.invisibleShortIds,
       mfa_enabled: this.mfa_enabled,
       mfa_totp_enabled: this.mfa_totp_enabled,
-      inviteBanned: this.inviteBanned
+      inviteBanned: this.inviteBanned,
+      domainDonor: this.domainDonor,
+      alpha: this.alpha,
+      beta: this.beta,
+      trusted: this.trusted,
+      contributor: this.contributor
     }
   }
 }

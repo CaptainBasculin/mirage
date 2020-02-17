@@ -28,6 +28,16 @@
           <span class="tag is-dark"><i class="fas fa-donate"></i></span>
           <span class="tag is-warning">Domain Donor</span>
         </div>
+        <% } %> <% if (user.contributor) { %>
+        <div class="tags has-addons">
+          <span class="tag is-dark"><i class="fas fa-code-branch"></i></span>
+          <span class="tag is-info">Contributor</span>
+        </div>
+        <% } %> <% if (user.trusted) { %>
+        <div class="tags has-addons">
+          <span class="tag is-dark"><i class="fas fa-certificate"></i></span>
+          <span class="tag is-info">Trusted</span>
+        </div>
         <% } %> <% if (user.alpha) { %>
         <div class="tags has-addons">
           <span class="tag is-dark"><i class="fas fa-vial"></i></span>

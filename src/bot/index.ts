@@ -44,7 +44,7 @@ export async function userCreated(user: User) {
   await logChannel.send(embed)
 }
 
-export async function linkUser(user: User, newId: string) {
+export async function linkUser(user: User, newId: string, roles: string[]) {
   if (user.discord !== null) {
     let discordUser = logChannel.guild.members.get(user.discord)
     if (!!discordUser) {
@@ -60,7 +60,7 @@ export async function linkUser(user: User, newId: string) {
 
   let discordUser = logChannel.guild.members.get(newId)
   if (!!discordUser) {
-    discordUser.addRole(process.env.DISCORD_MEMBER!)
+    discordUser.addRoles(roles)
     discordUser.setNickname(user.username)
   }
 
