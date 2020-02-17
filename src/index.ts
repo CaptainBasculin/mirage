@@ -30,6 +30,7 @@ import { Server } from 'http'
 import SocketIO from 'socket.io'
 import { initCounts } from './utils/SocketUtil'
 import { Report } from './database/entities/Report'
+import UserRouter from './routes/UserRouter'
 dotenv.config()
 
 // This allows TypeScript to detect our global value
@@ -272,7 +273,7 @@ app.use('/admin', AdminRouter)
 app.use('/moderator', ModeratorRouter)
 app.use('/analytics', AnalyticsRouter)
 app.use('/oauth', OAuthRouter)
-
+app.use(['/u', '/user'], UserRouter)
 async function getIndexLocals(): Promise<{
   users: number
   images: number

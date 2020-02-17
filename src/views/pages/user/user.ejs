@@ -1,0 +1,86 @@
+<div class="container">
+  <h1 class="title"><%= user.username %></h1>
+  <div class="columns">
+    <div class="column is-one-quarter">
+      <% if (user.suspended) { %>
+      <div class="tags has-addons">
+        <span class="tag is-dark"><i class="fas fa-ban"></i></span>
+        <span class="tag is-danger">Banned</span>
+      </div>
+      <% } %> <% if (user.inviteBanned) { %>
+      <div class="tags has-addons">
+        <span class="tag is-dark"><i class="fas fa-ban"></i></span>
+        <span class="tag is-warning">Invite Banned</span>
+      </div>
+      <% } %> <% if (user.admin) { %>
+      <div class="tags has-addons">
+        <span class="tag is-dark"><i class="fas fa-user-shield"></i></span>
+        <span class="tag is-primary">Admin</span>
+      </div>
+      <% } %> <% if (user.moderator) { %>
+      <div class="tags has-addons">
+        <span class="tag is-dark"><i class="fas fa-hammer"></i></span>
+        <span class="tag is-link">Moderator</span>
+      </div>
+      <% } %> <% if (user.domainDonor) { %>
+      <div class="tags has-addons">
+        <span class="tag is-dark"><i class="fas fa-donate"></i></span>
+        <span class="tag is-warning">Domain Donor</span>
+      </div>
+      <% } %> <% if (user.alpha) { %>
+      <div class="tags has-addons">
+        <span class="tag is-dark"><i class="fas fa-vial"></i></span>
+        <span class="tag is-success">Alpha Tester</span>
+      </div>
+      <% } %> <% if (user.beta) { %>
+      <div class="tags has-addons">
+        <span class="tag is-dark"><i class="fas fa-vial"></i></span>
+        <span class="tag is-success">Beta Tester</span>
+      </div>
+      <% } %>
+    </div>
+    <div class="columns"></div>
+  </div>
+  <h2 class="subtitle">Gallery</h2>
+  <div class="fw">
+    <div class="c">
+      <span class="icon">
+        <i class="fas fa-frown fa-3x"></i>
+      </span>
+      <span class="pt-1 has-text-weight-medium is-size-4">
+        This user has not published any photos
+      </span>
+    </div>
+  </div>
+  <h2 class="subtitle">Domains Donated</h2>
+  <div class="fw">
+    <div class="c">
+      <span class="icon">
+        <i class="fas fa-frown fa-3x"></i>
+      </span>
+      <span class="pt-1 has-text-weight-medium is-size-4">
+        This user has not donated any domains
+      </span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .tags:not(:last-child) {
+    margin-bottom: 0.15rem;
+  }
+  .fw {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .c {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .pt-1 {
+    padding-top: 1em;
+  }
+</style>

@@ -120,6 +120,21 @@ export class User extends BaseEntity {
   })
   inviteBanned: boolean
 
+  @Column({
+    default: false
+  })
+  domainDonor: boolean
+
+  @Column({
+    default: false
+  })
+  alpha: boolean
+
+  @Column({
+    default: false
+  })
+  beta: boolean
+
   serialize() {
     return {
       id: this.id,
