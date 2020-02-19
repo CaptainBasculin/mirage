@@ -48,9 +48,9 @@ export async function linkUser(user: User, newId: string, roles: string[]) {
   if (user.discord !== null) {
     let discordUser = logChannel.guild.members.get(user.discord)
     if (!!discordUser) {
-      discordUser.removeRole(process.env.DISCORD_MEMBER!)
-      discordUser.send(
-        `You linked a new Discord to your Mirage account.\n\nIf you did not do this, contact Mirage support!`
+      await discordUser.removeRoles(roles)
+      await discordUser.send(
+        `You linked a new Discord to your Mirage account.\n\nIf you did not do this, contact Mirage admins`
       )
     }
   }
@@ -60,8 +60,8 @@ export async function linkUser(user: User, newId: string, roles: string[]) {
 
   let discordUser = logChannel.guild.members.get(newId)
   if (!!discordUser) {
-    discordUser.addRoles(roles)
-    discordUser.setNickname(user.username)
+    await discordUser.addRoles(roles)
+    await discordUser.setNickname(user.username)
   }
 
   let embed = new Discord.RichEmbed()
