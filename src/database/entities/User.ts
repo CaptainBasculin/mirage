@@ -187,4 +187,10 @@ declare global {
       flash: (clazz: string, message: string) => void
     }
   }
+  namespace SocketIO {
+    interface Socket {
+      user: User
+      loggedIn: boolean
+    }
+  }
 }

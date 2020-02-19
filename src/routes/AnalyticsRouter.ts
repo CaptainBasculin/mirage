@@ -40,5 +40,9 @@ AnalyticsRouter.route('/').get(async (req, res) => {
     imagesJSON
   })
 })
-
+AnalyticsRouter.route('/test').get(async (req, res) => {
+  return res.render('pages/analytics/test', {
+    layout: 'layouts/analytics'
+  })
+})
 export default AnalyticsRouter

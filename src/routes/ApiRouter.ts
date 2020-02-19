@@ -13,7 +13,7 @@ import { Image } from '../database/entities/Image'
 import rb from 'raw-body'
 import path from 'path'
 import { ShortenedUrl } from '../database/entities/ShortenedUrl'
-import { increaseImage, increaseUrl } from '../utils/SocketUtil'
+import { increaseImage, increaseUrl, sendImage } from '../utils/SocketUtil'
 
 const ApiRouter = express.Router()
 
@@ -70,6 +70,7 @@ async function uploadImage(
   await image.save()
   await bucket.file(image.path).save(file.buffer)
   increaseImage()
+  sendImage(image)
   return image
 }
 

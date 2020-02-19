@@ -1,0 +1,73 @@
+<section class="section">
+  <div class="ct">
+    <img src="https://via.placeholder.com/960x540" class="preview-image" />
+  </div>
+  <div class="data">
+    <div class="data-row">
+      <strong>uploader</strong>
+      <a href="#" target="_blank" id="image-uploader">n/a</a>
+    </div>
+    <div class="data-row">
+      <strong>image url</strong>
+      <a href="#" target="_blank" id="image-url">n/a</a>
+    </div>
+    <div class="data-row">
+      <strong>
+        <a href="#" target="_blank" id="image-modlink">
+          go to mod panel
+        </a>
+      </strong>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ct {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .data {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+  }
+  .data-row {
+    display: flex;
+    flex-direction: column;
+  }
+  .preview-image {
+    max-width: 960px;
+    max-height: 540px;
+  }
+</style>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const $img = document.getElementsByClassName('preview-image')[0]
+  const $uploader = document.getElementById('image-uploader')
+  const $url = document.getElementById('image-url')
+  const $modlink = document.getElementById('image-modlink')
+
+  const socket = io()
+  socket.on('connect', () => {
+    socket.emit('auth', '<%= profile.uploadKey %>')
+  })
+  socket.on('admin_image', image => {
+    console.log(image)
+
+    // update preview image
+    $img.src = image.url
+
+    // update uploader element
+    $uploader.innerText = image.uploader.username
+    $uploader.href = `/admin/users/${image.uploader.username}`
+
+    // update url element
+    $url.innerText = image.url
+    $url.href = image.url
+
+    // update modlink
+    $modlink.href = `/moderator/images/${image.shortId}`
+  })
+</script>
