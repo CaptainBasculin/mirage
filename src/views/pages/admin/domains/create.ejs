@@ -1,0 +1,59 @@
+<h1 class="title">Create Domain</h1>
+<h2 class="subtitle">
+  Add domain to database
+</h2>
+
+<a href="/admin/domains" class="has-text-link">Back to Listing</a>
+
+<form method="POST">
+  <div class="field">
+    <label class="label">Domain</label>
+    <div class="control">
+      <input
+        name="domain"
+        class="input"
+        type="text"
+        placeholder="mirage.re"
+        value=""
+      />
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="label">Donor (leave empty if none)</label>
+    <div class="control">
+      <input
+        name="donor"
+        class="input"
+        type="text"
+        placeholder="relative"
+        value=""
+      />
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="label">Public</label>
+    <div class="control">
+      <input name="public" type="checkbox" class="checkbox" checked />
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="label">Wildcard</label>
+    <div class="control">
+      <input name="wildcard" type="checkbox" class="checkbox" checked />
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="label">Editable by Donor</label>
+    <div class="control">
+      <input name="editable" type="checkbox" class="checkbox" />
+    </div>
+  </div>
+
+  <div class="field">
+    <button class="button is-primary" type="submit">Create</button>
+  </div>
+</form>

@@ -9,6 +9,7 @@ import { bucket } from '../utils/StorageUtil'
 import sgMail from '@sendgrid/mail'
 import { Banner } from '../database/entities/Banner'
 import { randomUserId } from '../utils/RandomUtil'
+import { Domain } from '../database/entities/Domain'
 
 const AdminRouter = express.Router()
 AdminRouter.use(
@@ -293,6 +294,124 @@ AdminRouter.route('/users/:id/invite_unban').get(async (req, res) => {
   await user.save()
   req.flash('is-success', 'User was unbanned from the invite system')
   return res.redirect(`/admin/users/${user.username}`)
+})
+
+AdminRouter.route('/domains').get(async (req, res) => {
+  const domains = await Domain.find({
+    relations: ['donor']
+  })
+  res.render('pages/admin/domains/index', {
+    domains,
+    layout: 'layouts/admin'
+  })
+})
+
+AdminRouter.route('/domains/create')
+  .get((req, res) => {
+    res.render('pages/admin/domains/create', {
+      layout: 'layouts/admin'
+    })
+  })
+  .post(async (req, res) => {
+    let domainExists = await Domain.findOne({
+      where: {
+        domain: req.body.domain
+      }
+    })
+    if (domainExists) {
+      req.flash('is-danger', 'Domain already exists')
+      return res.redirect('/admin/domains/create')
+    }
+
+    const domain = new Domain()
+    domain.id = randomUserId()
+    domain.domain = req.body.domain
+    domain.public = req.body.public && req.body.public === 'on'
+    domain.wildcard = req.body.wildcard && req.body.wildcard === 'on'
+    domain.editable = req.body.editable && req.body.editable === 'on'
+
+    if (req.body.donor && req.body.donor.length > 0) {
+      let donor = await User.findOne({
+        where: {
+          username: req.body.donor
+        }
+      })
+      if (!donor) {
+        req.flash('is-danger', 'Donor does not exist, try again')
+        return res.redirect('/admin/domains/create')
+      }
+      domain.donor = donor
+    }
+
+    await domain.save()
+
+    req.flash('is-success', 'Domain created successfully')
+    res.redirect(`/admin/domains/${domain.domain}`)
+  })
+
+AdminRouter.route('/domains/:domain')
+  .get(async (req, res) => {
+    const domain = await Domain.findOne({
+      where: {
+        domain: req.params.domain
+      },
+      relations: ['donor']
+    })
+    if (!domain) {
+      req.flash('is-danger', 'Domain does not exist')
+      return res.redirect('/admin/domains')
+    }
+    return res.render('pages/admin/domains/domain', {
+      domain,
+      layout: 'layouts/admin'
+    })
+  })
+  .post(async (req, res) => {
+    const domain = await Domain.findOne({
+      where: {
+        domain: req.params.domain
+      }
+    })
+    if (!domain) {
+      req.flash('is-danger', 'Domain does not exist')
+      return res.redirect('/admin/domains')
+    }
+    domain.public = req.body.public && req.body.public === 'on'
+    domain.wildcard = req.body.wildcard && req.body.wildcard === 'on'
+    domain.editable = req.body.editable && req.body.editable === 'on'
+
+    if (req.body.donor && req.body.donor.length > 0) {
+      let donor = await User.findOne({
+        where: {
+          username: req.body.donor
+        }
+      })
+      if (!donor) {
+        req.flash('is-danger', 'Donor does not exist, try again')
+        return res.redirect(`/admin/domains/${domain.domain}`)
+      }
+      domain.donor = donor
+    }
+
+    await domain.save()
+
+    req.flash('is-success', 'Domain updated successfully')
+    res.redirect(`/admin/domains/${domain.domain}`)
+  })
+
+AdminRouter.route('/domains/:domain/delete').get(async (req, res) => {
+  const domain = await Domain.findOne({
+    where: {
+      domain: req.params.domain
+    }
+  })
+  if (!domain) {
+    req.flash('is-danger', 'Domain does not exist')
+    return res.redirect('/admin/domains')
+  }
+  await domain.remove()
+  req.flash('is-success', `Domain ${domain.domain} removed successfully`)
+  return res.redirect('/admin/domains')
 })
 
 AdminRouter.route('/banners').get(async (req, res) => {

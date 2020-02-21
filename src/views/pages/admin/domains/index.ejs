@@ -1,0 +1,48 @@
+<h1 class="title">Domains</h1>
+<h2 class="subtitle">
+  View all domains
+</h2>
+
+<a href="/admin/domains/create" class="button is-primary">Create</a>
+
+<table class="table is-hoverable is-fullwidth is-striped">
+  <thead>
+    <tr>
+      <th>Domain</th>
+      <th>Donor</th>
+      <th>Public</th>
+      <th>Wildcard</th>
+      <th>Editable</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% domains.map(domain => { %>
+    <tr>
+      <td>
+        <a href="/admin/domains/<%= domain.domain %>"><%= domain.domain %></a>
+      </td>
+      <td>
+        <% if (domain.donor) { %>
+        <a href="/admin/users/<%= domain.donor.username %>">
+          <%= domain.donor.username %>
+        </a>
+        <% } else { %>
+        <em>none</em>
+        <% } %>
+      </td>
+      <td>
+        <input name="public" type="checkbox" class="checkbox" disabled <%=
+        domain.public ? 'checked' : '' %> />
+      </td>
+      <td>
+        <input name="public" type="checkbox" class="checkbox" disabled <%=
+        domain.wildcard ? 'checked' : '' %> />
+      </td>
+      <td>
+        <input name="public" type="checkbox" class="checkbox" disabled <%=
+        domain.editable ? 'checked' : '' %> />
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>

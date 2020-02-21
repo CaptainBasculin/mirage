@@ -2,6 +2,7 @@ import { Entity, Column, BaseEntity, PrimaryColumn, OneToMany } from 'typeorm'
 import { Image } from './Image'
 import { Invite } from './Invite'
 import { ShortenedUrl } from './ShortenedUrl'
+import { Domain } from './Domain'
 
 @Entity()
 export class User extends BaseEntity {
@@ -89,6 +90,12 @@ export class User extends BaseEntity {
     url => url.creator
   )
   urls: ShortenedUrl[]
+
+  @OneToMany(
+    type => Domain,
+    domain => domain.donor
+  )
+  donatedDomains: Domain[]
 
   @Column({
     nullable: true

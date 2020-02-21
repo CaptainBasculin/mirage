@@ -92,7 +92,8 @@ app.use(
     }),
     secret: process.env.SECRET!,
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    unset: 'destroy'
   })
 )
 
