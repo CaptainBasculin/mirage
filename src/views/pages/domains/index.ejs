@@ -1,0 +1,68 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title">Domains</h1>
+    <h2 class="subtitle">
+      View all domains
+    </h2>
+
+    <div class="box ">
+      <div>
+        <span class="tag is-success is-light">Wildcard</span>
+        <span>all subdomains and domains can be used</span>
+        <span><em>ex.</em> lol.ipgrabber.link, ipgrabber.link</span>
+      </div>
+      <br />
+      <div>
+        <span class="tag is-danger is-light">Domain Only</span>
+        <span>can only use the domain/subdomain only, no subdomains</span>
+        <span
+          ><em>ex.</em> cdn.pisscord.app <strong>NOT</strong> pisscord.app,
+          lol.pisscord.app, xd.cdn.pisscord.app</span
+        >
+      </div>
+    </div>
+
+    <table class="table is-hoverable is-fullwidth is-striped">
+      <thead>
+        <tr>
+          <th>Domain</th>
+          <th>Tags</th>
+          <th>Donor</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% domains.map(domain => { %>
+        <tr>
+          <td>
+            <%= domain.domain %>
+          </td>
+          <td>
+            <% if (domain.donor) { %>
+            <span class="tag is-warning is-light">Donated</span>
+            <% } else { %>
+            <span class="tag is-primary is-light">Official</span>
+            <% } %> <% if (domain.wildcard) { %>
+            <span class="tag is-success is-light">Wildcard</span>
+            <% } else { %>
+            <span class="tag is-danger is-light">Domain Only</span>
+            <% } %>
+          </td>
+          <td>
+            <% if (domain.donor) { %> <%= domain.donor.username %> <% } else {
+            %>
+            <em>none</em>
+            <% } %>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<style>
+  .box {
+    box-shadow: 0 0.5em 1em -0.125em rgba(0, 0, 0, 0.5),
+      0 0px 0 1px rgba(0, 0, 0, 0.5);
+  }
+</style>

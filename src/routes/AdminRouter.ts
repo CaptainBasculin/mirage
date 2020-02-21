@@ -297,9 +297,24 @@ AdminRouter.route('/users/:id/invite_unban').get(async (req, res) => {
 })
 
 AdminRouter.route('/domains').get(async (req, res) => {
-  const domains = await Domain.find({
+  let _domains = await Domain.find({
     relations: ['donor']
   })
+
+  const sortFn = (a: Domain, b: Domain) => {
+    if (a.domain < b.domain) {
+      return -1
+    }
+    if (a.domain > b.domain) {
+      return 1
+    }
+    return 0
+  }
+
+  let official = _domains.filter(domain => !domain.donor).sort(sortFn)
+  let donor = _domains.filter(domains => domains.donor).sort(sortFn)
+
+  let domains = official.concat(donor)
   res.render('pages/admin/domains/index', {
     domains,
     layout: 'layouts/admin'
@@ -379,6 +394,9 @@ AdminRouter.route('/domains/:domain')
     domain.public = req.body.public && req.body.public === 'on'
     domain.wildcard = req.body.wildcard && req.body.wildcard === 'on'
     domain.editable = req.body.editable && req.body.editable === 'on'
+    if (!req.body.public) domain.public = false
+    if (!req.body.wildcard) domain.wildcard = false
+    if (!req.body.editable) domain.editable = false
 
     if (req.body.donor && req.body.donor.length > 0) {
       let donor = await User.findOne({
