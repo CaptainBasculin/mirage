@@ -69,6 +69,7 @@
   <section class="section">
     <h2 class="subtitle">Domains Donated</h2>
     <div class="fw">
+      <% if (!user.donatedDomains || user.donatedDomains.length < 0) { %>
       <div class="c">
         <span class="icon">
           <i class="fas fa-frown fa-3x"></i>
@@ -77,6 +78,36 @@
           This user has not donated any domains
         </span>
       </div>
+      <% } else { %>
+      <table class="table is-hoverable is-fullwidth is-striped">
+        <thead>
+          <tr>
+            <th>Domain</th>
+            <th>Tags</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% user.donatedDomains.map(domain => { %>
+          <tr>
+            <td>
+              <%= domain.domain %>
+            </td>
+            <td>
+              <% if (domain.donor) { %>
+              <span class="tag is-warning is-light">Donated</span>
+              <% } else { %>
+              <span class="tag is-primary is-light">Official</span>
+              <% } %> <% if (domain.wildcard) { %>
+              <span class="tag is-success is-light">Wildcard</span>
+              <% } else { %>
+              <span class="tag is-danger is-light">Domain Only</span>
+              <% } %>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% } %>
     </div>
   </section>
 </div>
