@@ -14,7 +14,7 @@ import rb from 'raw-body'
 import path from 'path'
 import { ShortenedUrl } from '../database/entities/ShortenedUrl'
 import { increaseImage, increaseUrl, sendImage } from '../utils/SocketUtil'
-
+import * as _ from 'lodash'
 const ApiRouter = express.Router()
 
 ApiRouter.use(bodyParser.json())
@@ -51,6 +51,15 @@ async function uploadImage(
       throw new Error('Short id already exists in db')
     }
   }
+
+  if (host === '#random#') {
+    let randomDomains = user.randomDomains
+    if (randomDomains.length === 0) {
+      randomDomains.push('mirage.re')
+    }
+    host = _.sample(randomDomains)!
+  }
+
   let image = new Image()
   image.id = randomUserId()
   image.shortId = randomId
@@ -200,6 +209,13 @@ ApiRouter.route('/shorten').post(async (req, res) => {
   }
   let rndFn = user.invisibleShortIds ? randomInvisibleId : randomImageId
   let host = req.body.host || req.hostname || 'mirage.re'
+  if (host === '#random#') {
+    let randomDomains = user.randomDomains
+    if (randomDomains.length === 0) {
+      randomDomains.push('mirage.re')
+    }
+    host = _.sample(randomDomains)!
+  }
   let url = new ShortenedUrl()
   url.id = randomUserId()
   url.creator = user
