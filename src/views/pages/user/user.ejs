@@ -93,11 +93,8 @@
               <%= domain.domain %>
             </td>
             <td>
-              <% if (domain.donor) { %>
               <span class="tag is-warning is-light">Donated</span>
-              <% } else { %>
-              <span class="tag is-primary is-light">Official</span>
-              <% } %> <% if (domain.wildcard) { %>
+              <% if (domain.wildcard) { %>
               <span class="tag is-success is-light">Wildcard</span>
               <% } else { %>
               <span class="tag is-danger is-light">Domain Only</span>
