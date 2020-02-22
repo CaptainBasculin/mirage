@@ -152,6 +152,9 @@ export class User extends BaseEntity {
   })
   contributor: boolean
 
+  @Column('varchar', { array: true, default: '{}' })
+  randomDomains: string[]
+
   serialize() {
     return {
       id: this.id,
@@ -181,7 +184,8 @@ export class User extends BaseEntity {
       alpha: this.alpha,
       beta: this.beta,
       trusted: this.trusted,
-      contributor: this.contributor
+      contributor: this.contributor,
+      randomDomains: this.randomDomains
     }
   }
 }

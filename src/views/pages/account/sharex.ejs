@@ -3,16 +3,32 @@
   Generate a ShareX config for use with Mirage
 </h2>
 
-<form method="POST">
+<form method="POST" id="form">
   <div class="field">
-    <label class="label">Host</label>
-    <div class="control">
-      <input class="input" type="text" name="host" required />
+    <input type="hidden" name="host" id="host" />
+    <div class="field is-horizontal">
+      <input
+        class="input"
+        type="text"
+        name="subdomain"
+        id="subdomain"
+        placeholder="Subdomain"
+        disabled
+      />
+      <div class="select">
+        <select id="select">
+          <option value="#random#_notwildcard">
+            Random domain (see Random Domains in sidebar)
+          </option>
+          <% domains.map(domain => { %>
+          <option
+            value="<%= domain.domain %><% if (!domain.wildcard) { %>_notwildcard<% } %>"
+            ><%= domain.domain %>
+          </option>
+          <% }) %>
+        </select>
+      </div>
     </div>
-    <p class="help">
-      See the <a href="/discord" target="_blank">Discord</a> to see all
-      available domains.
-    </p>
   </div>
   <div class="field">
     <div class="control">
@@ -20,3 +36,31 @@
     </div>
   </div>
 </form>
+<script>
+  const $subdomain = document.getElementById('subdomain')
+  const $select = document.getElementById('select')
+  const $hostInp = document.getElementById('host')
+  const $form = document.getElementById('form')
+
+  $select.onchange = e => {
+    if ($select.value.endsWith('_notwildcard')) {
+      $subdomain.disabled = true
+      $subdomain.value = ''
+    } else {
+      $subdomain.disabled = false
+    }
+  }
+
+  $form.onsubmit = e => {
+    let sub = $subdomain.value
+    let domain = $select.value.split('_')[0]
+    let fullDomain = domain
+    if (sub && sub.length > 0) fullDomain = `${sub}.${fullDomain}`
+    $hostInp.value = fullDomain
+  }
+</script>
+<style>
+  #subdomain {
+    margin-right: 10px;
+  }
+</style>

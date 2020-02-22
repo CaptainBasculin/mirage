@@ -1,0 +1,131 @@
+<h1 class="title">Random Domains</h1>
+<h2 class="subtitle">Select random domains to use in your ShareX config</h2>
+
+<div class="content">
+  <div>
+    <div class="field is-horizontal">
+      <input
+        class="input"
+        type="text"
+        name="subdomain"
+        id="subdomain"
+        placeholder="Subdomain"
+      />
+      <div class="select">
+        <select id="select">
+          <% domains.map(domain => { %>
+          <option
+            value="<%= domain.domain %><% if (!domain.wildcard) { %>_notwildcard<% } %>"
+            ><%= domain.domain %>
+          </option>
+          <% }) %>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <a href="#" class="has-text-success" id="addbutton">
+        <i class="fas fa-plus"></i>
+      </a>
+    </div>
+
+    <table class="table is-narrow is-hoverable is-striped">
+      <thead>
+        <tr>
+          <th>Domain</th>
+          <th>Edit</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <form method="POST" id="form">
+      <input type="hidden" id="domains" name="domains" value="" />
+      <div class="field">
+        <button class="button is-primary" type="submit" id="form-submit">
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  let domains = JSON.parse(`<%- JSON.stringify(profile.randomDomains) %>`)
+
+  const createTableEntry = domain => {
+    const tmpl = `<tr>
+          <td>h</td>
+          <td>
+            <a href="#" class="has-text-danger"><i class="fas fa-trash"></i></a>
+          </td>
+        </tr>`
+    const $tr = document.createElement('tr')
+    const $domainTd = document.createElement('td')
+    $domainTd.innerText = domain
+    $tr.appendChild($domainTd)
+
+    const $buttonTd = document.createElement('td')
+    const $deleteA = document.createElement('a')
+    $deleteA.href = '#'
+    $deleteA.className = 'has-text-danger'
+
+    $deleteA.onclick = e => {
+      e.preventDefault()
+      $tr.remove()
+      let idx = domains.indexOf(domain)
+      domains.splice(idx, 1)
+    }
+
+    const $deleteI = document.createElement('i')
+    $deleteI.className = 'fas fa-trash'
+    $deleteA.appendChild($deleteI)
+    $buttonTd.appendChild($deleteA)
+    $tr.appendChild($buttonTd)
+
+    $tbody.appendChild($tr)
+  }
+
+  const $domainsInp = document.getElementById('domains')
+  const $subdomain = document.getElementById('subdomain')
+  const $addBtn = document.getElementById('addbutton')
+  const $select = document.getElementById('select')
+  const $tbody = document.getElementById('tbody')
+  const $form = document.getElementById('form')
+
+  $addBtn.onclick = e => {
+    e.preventDefault()
+    let sub = $subdomain.value
+    let domain = $select.value.split('_')[0]
+    let fullDomain = domain
+    if (sub && sub.length > 0) fullDomain = `${sub}.${fullDomain}`
+    $subdomain.value = ''
+    if (domains.includes(fullDomain)) {
+      alert('Domain already exists!')
+      return
+    }
+    createTableEntry(fullDomain)
+    domains.push(fullDomain)
+  }
+
+  $select.onchange = e => {
+    if ($select.value.endsWith('_notwildcard')) {
+      $subdomain.disabled = true
+      $subdomain.value = ''
+    } else {
+      $subdomain.disabled = false
+    }
+  }
+
+  $form.onsubmit = e => {
+    $domainsInp.value = domains.join(';')
+  }
+
+  domains.forEach(domain => {
+    createTableEntry(domain)
+  })
+</script>
+
+<style>
+  #subdomain {
+    margin-right: 10px;
+  }
+</style>

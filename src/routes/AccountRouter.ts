@@ -11,6 +11,7 @@ import { sendImageNukeCompleted, sendURLNukeCompleted } from '../bot'
 import { rword } from 'rword'
 import speakeasy from 'speakeasy'
 import qrcode from 'qrcode'
+import { Domain } from '../database/entities/Domain'
 const AccountRouter = express.Router()
 AccountRouter.use(
   bodyParser.urlencoded({
@@ -69,9 +70,28 @@ AccountRouter.route('/invisible_short_ids').post(async (req, res) => {
   return res.redirect('/account')
 })
 AccountRouter.route('/urlshortener')
-  .get((req, res) => {
+  .get(async (req, res) => {
+    let _domains = await Domain.find({
+      relations: ['donor']
+    })
+
+    const sortFn = (a: Domain, b: Domain) => {
+      if (a.domain < b.domain) {
+        return -1
+      }
+      if (a.domain > b.domain) {
+        return 1
+      }
+      return 0
+    }
+
+    let official = _domains.filter(domain => !domain.donor).sort(sortFn)
+    let donor = _domains.filter(domains => domains.donor).sort(sortFn)
+
+    let domains = official.concat(donor)
     res.render('pages/account/urlshortener', {
-      layout: 'layouts/account'
+      layout: 'layouts/account',
+      domains
     })
   })
   .post((req, res) => {
@@ -99,10 +119,63 @@ AccountRouter.route('/discord').get((req, res) => {
   })
 })
 
+AccountRouter.route('/random')
+  .get(async (req, res) => {
+    let _domains = await Domain.find({
+      relations: ['donor']
+    })
+
+    const sortFn = (a: Domain, b: Domain) => {
+      if (a.domain < b.domain) {
+        return -1
+      }
+      if (a.domain > b.domain) {
+        return 1
+      }
+      return 0
+    }
+
+    let official = _domains.filter(domain => !domain.donor).sort(sortFn)
+    let donor = _domains.filter(domains => domains.donor).sort(sortFn)
+
+    let domains = official.concat(donor)
+
+    res.render('pages/account/random', {
+      layout: 'layouts/account',
+      domains
+    })
+  })
+  .post(async (req, res) => {
+    const domains = req.body.domains.split(';')
+    req.user.randomDomains = domains
+    await req.user.save()
+    req.flash('is-success', 'Random domains updated successfully')
+    return res.redirect('/account/random')
+  })
+
 AccountRouter.route('/sharex')
-  .get((req, res) => {
+  .get(async (req, res) => {
+    let _domains = await Domain.find({
+      relations: ['donor']
+    })
+
+    const sortFn = (a: Domain, b: Domain) => {
+      if (a.domain < b.domain) {
+        return -1
+      }
+      if (a.domain > b.domain) {
+        return 1
+      }
+      return 0
+    }
+
+    let official = _domains.filter(domain => !domain.donor).sort(sortFn)
+    let donor = _domains.filter(domains => domains.donor).sort(sortFn)
+
+    let domains = official.concat(donor)
     res.render('pages/account/sharex', {
-      layout: 'layouts/account'
+      layout: 'layouts/account',
+      domains
     })
   })
   .post((req, res) => {
