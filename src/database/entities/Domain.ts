@@ -40,4 +40,12 @@ export class Domain extends BaseEntity {
       donor: this.donor
     }
   }
+  apiSerialize() {
+    return {
+      id: this.id,
+      domain: this.domain,
+      public: this.public,
+      wildcard: this.wildcard
+    }
+  }
 }

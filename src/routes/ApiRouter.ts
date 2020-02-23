@@ -15,6 +15,8 @@ import path from 'path'
 import { ShortenedUrl } from '../database/entities/ShortenedUrl'
 import { increaseImage, increaseUrl, sendImage } from '../utils/SocketUtil'
 import * as _ from 'lodash'
+import { Domain } from '../database/entities/Domain'
+import { limiter } from '../utils/RatelimitUtil'
 const ApiRouter = express.Router()
 
 ApiRouter.use(bodyParser.json())
@@ -325,6 +327,24 @@ ApiRouter.route(['/image/:file', '/image/*/:file']).get(async (req, res) => {
 
   let buf = await rb(file.createReadStream())
   return res.contentType(mimeType).send(buf)
+})
+
+ApiRouter.route('/domains').get(limiter, async (req, res) => {
+  const domains = (
+    await Domain.find({
+      where: {
+        public: true
+      }
+    })
+  ).map(domain => domain.apiSerialize())
+
+  return res.json({
+    meta: {
+      status: 200,
+      message: 'OK'
+    },
+    domains
+  })
 })
 
 export default ApiRouter

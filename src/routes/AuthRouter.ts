@@ -8,6 +8,7 @@ import { Invite } from '../database/entities/Invite'
 import { userCreated, userLogin } from '../bot'
 import { increaseUser } from '../utils/SocketUtil'
 import speakeasy from 'speakeasy'
+import { authLimiter } from '../utils/RatelimitUtil'
 const AuthRouter = express.Router()
 
 AuthRouter.use(
@@ -15,6 +16,8 @@ AuthRouter.use(
     extended: true
   })
 )
+
+AuthRouter.use(authLimiter)
 
 AuthRouter.route('/login')
   .get((req, res) => {
