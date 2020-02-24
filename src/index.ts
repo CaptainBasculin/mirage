@@ -323,7 +323,7 @@ app.get('/error', (req, res) => {
 })
 
 app.use((req, res) => {
-  return res.render('pages/errors/404', {
+  return res.status(404).render('pages/errors/404', {
     layout: 'layouts/layout'
   })
 })
