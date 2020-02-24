@@ -32,6 +32,8 @@ import { initCounts } from './utils/SocketUtil'
 import { Report } from './database/entities/Report'
 import UserRouter from './routes/UserRouter'
 import DomainsRouter from './routes/DomainsRouter'
+import onFinished from 'on-finished'
+import fetch from 'node-fetch'
 dotenv.config()
 
 // This allows TypeScript to detect our global value
@@ -107,6 +109,17 @@ app.use((req, res, next) => {
   }
   return next()
 })
+
+if (process.env.HTTP_WEBHOOK) {
+  app.use((req, res, next) => {
+    onFinished(res, (err, res) => {
+      fetch(
+        `${process.env.HTTP_WEBHOOK}/request?status=${res.statusCode}&ip=${req.ip}&path=${req.path}`
+      )
+    })
+    next()
+  })
+}
 
 app.use(async (req, res, next) => {
   // banners
@@ -320,6 +333,16 @@ app.get('/contact', (req, res) => {
 
 app.get('/error', (req, res) => {
   throw new Error('Test exception')
+})
+
+app.get('/400', (req, res) => {
+  res.status(400).send('400')
+})
+app.get('/404', (req, res) => {
+  res.status(404).send('404')
+})
+app.get('/500', (req, res) => {
+  res.status(500).send('500')
 })
 
 app.use((req, res) => {
