@@ -21,6 +21,9 @@ AuthRouter.use(authLimiter)
 
 AuthRouter.route('/login')
   .get((req, res) => {
+    if (req.query.next) {
+      req.session!.next = decodeURIComponent(req.query.next)
+    }
     res.render('pages/auth/login', {
       values: {},
       errors: {}
@@ -88,6 +91,10 @@ AuthRouter.route('/login')
     req.session!.loggedIn = true
     req.session!.ip = req.ip
     userLogin(user, req.ip, req.headers['user-agent'] || '')
+    if (req.session!.next) {
+      req.session!.next = undefined
+      return res.redirect(req.session!.next)
+    }
     res.redirect('/')
   })
 
@@ -352,6 +359,10 @@ AuthRouter.route('/jail/totp').post(async (req, res) => {
   req.session!.loggedIn = true
   req.session!.ip = req.ip
   req.flash('is-success', 'Logged in successfully')
+  if (req.session!.next) {
+    req.session!.next = undefined
+    return res.redirect(req.session!.next)
+  }
   return res.redirect('/account')
 })
 AuthRouter.route('/jail/disable')

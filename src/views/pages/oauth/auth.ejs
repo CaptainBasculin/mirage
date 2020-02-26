@@ -1,0 +1,15 @@
+<section class="section">
+  <div class="container">
+    <h1 class="title">Authorize access to your account</h1>
+    <p>
+      Are you sure you want to authorize access to "<%= clientId %>"?
+    </p>
+    <form method="POST">
+      <input type="hidden" name="client_id" value="<%= clientId %>" />
+      <input type="hidden" name="redirect_uri" value="<%= redirectUri %>" />
+      <button class="button is-primary" type="submit">Yes</button>
+    </form>
+    <br />
+    <a class="button is-danger" href="/">Cancel</a>
+  </div>
+</section>

@@ -4,6 +4,8 @@ import fetch from 'node-fetch'
 import { randomKey } from '../utils/RandomUtil'
 import querystring from 'querystring'
 import { linkUser } from '../bot'
+import jwt from 'jsonwebtoken'
+import { User } from '../database/entities/User'
 
 const OAuthRouter = express.Router()
 OAuthRouter.use(
@@ -112,6 +114,76 @@ OAuthRouter.route('/discord/redirect').get(async (req, res) => {
     `Sucessfully linked discord ${userJson.username}#${userJson.discriminator} to your account`
   )
   return res.redirect(`/account/discord`)
+})
+
+// fake oauth until real oauth2 implemented
+OAuthRouter.route('/tempauth')
+  .get(async (req, res) => {
+    let redirectUri = req.query.redirect_uri
+    let clientId = req.query.client_id
+    let red = encodeURIComponent(
+      `/oauth/tempauth?client_id=${clientId}&redirect_uri=${redirectUri}&`
+    )
+    if (!req.loggedIn) {
+      return res.redirect(`/auth/login?next=${red}`)
+    }
+
+    res.render('pages/oauth/auth', {
+      redirectUri,
+      clientId
+    })
+  })
+  .post((req, res) => {
+    let redirectUri = req.body.redirect_uri
+    let clientId = req.body.client_id
+    let token = jwt.sign(
+      {
+        user: req.user!.id
+      },
+      process.env.SECRET + 'jwtjwtjwt',
+      {
+        expiresIn: '30m'
+      }
+    )
+    return res.redirect(`${redirectUri}?token=${token}`)
+  })
+
+OAuthRouter.route('/user').get(async (req, res) => {
+  try {
+    const decoded = jwt.verify(
+      req.headers!.authorization!,
+      process.env.SECRET + 'jwtjwtjwt'
+    ) as {
+      user: string
+    }
+    let user = await User.findOne({
+      where: {
+        id: decoded.user
+      }
+    })
+    if (!user) {
+      return res.status(401).json({
+        meta: {
+          status: 401,
+          message: 'bad token'
+        }
+      })
+    }
+    return res.status(200).json({
+      meta: {
+        status: 200,
+        message: 'ok'
+      },
+      user: user.serialize()
+    })
+  } catch (err) {
+    return res.status(401).json({
+      meta: {
+        status: 401,
+        message: 'bad token'
+      }
+    })
+  }
 })
 
 export default OAuthRouter
