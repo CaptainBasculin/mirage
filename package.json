@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@types/body-parser": "^1.17.1",
+    "@types/cbor": "^5.0.0",
     "@types/connect-redis": "^0.0.11",
     "@types/cors": "^2.8.6",
     "@types/dotenv": "^6.1.1",
@@ -48,12 +49,15 @@
     "typescript": "3.5.3"
   },
   "dependencies": {
+    "@fidm/x509": "^1.2.1",
     "@google-cloud/storage": "^3.2.1",
     "@sendgrid/mail": "^6.4.0",
     "@sentry/integrations": "^5.10.2",
     "@sentry/node": "^5.10.2",
     "argon2": "^0.24.1",
+    "base64url": "^3.0.1",
     "body-parser": "^1.19.0",
+    "cbor": "^5.0.1",
     "connect-redis": "^4.0.2",
     "cors": "^2.8.5",
     "discord.js": "^11.5.1",

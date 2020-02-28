@@ -12,6 +12,8 @@ import { rword } from 'rword'
 import speakeasy from 'speakeasy'
 import qrcode from 'qrcode'
 import { Domain } from '../database/entities/Domain'
+import crypto from 'crypto'
+
 const AccountRouter = express.Router()
 AccountRouter.use(
   bodyParser.urlencoded({
@@ -366,6 +368,15 @@ AccountRouter.route('/mfa').get(async (req, res) => {
     })
   }
   return res.render('pages/account/mfa/index', { layout: 'layouts/account' })
+})
+
+AccountRouter.route('/mfa/u2f').get((req, res) => {
+  const challenge = crypto.randomBytes(32).toJSON()
+  return res.render('pages/account/mfa/u2f', {
+    layout: 'layouts/account',
+    challenge,
+    domain: process.env.WEBAUTHN_RPID
+  })
 })
 
 AccountRouter.route('/mfa/confirm').post(async (req, res) => {
