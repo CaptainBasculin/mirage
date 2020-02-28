@@ -13,7 +13,13 @@ export class User extends BaseEntity {
   username: string
 
   @Column()
+  lowercaseUsername: string
+
+  @Column()
   email: string
+
+  @Column()
+  lowercaseEmail: string
 
   @Column()
   emailVerificationToken: string

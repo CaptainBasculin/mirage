@@ -47,8 +47,9 @@ AuthRouter.route('/login')
     }
     let user = await User.findOne({
       where: {
-        [req.body.username.includes('@') ? 'email' : 'username']: req.body
-          .username
+        [req.body.username.includes('@')
+          ? 'lowercaseEmail'
+          : 'lowercaseUsername']: req.body.username
       }
     })
     if (!user) {
@@ -194,6 +195,8 @@ AuthRouter.route('/register')
     user.id = randomUserId()
     user.username = req.body.username
     user.email = req.body.email
+    user.lowercaseUsername = user.username.toLowerCase()
+    user.lowercaseEmail = user.email.toLowerCase()
     user.emailVerificationToken = randomKey()
     let pwHash = await argon2.hash(req.body.password)
     user.password = pwHash
