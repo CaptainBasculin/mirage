@@ -49,7 +49,7 @@ AuthRouter.route('/login')
       where: {
         [req.body.username.includes('@')
           ? 'lowercaseEmail'
-          : 'lowercaseUsername']: req.body.username
+          : 'lowercaseUsername']: req.body.username.toLowerCase()
       }
     })
     if (!user) {
