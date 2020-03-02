@@ -86,6 +86,11 @@ OAuthRouter.route('/discord/redirect').get(async (req, res) => {
   if (req.user.trusted) {
     roles.push(process.env.DISCORD_TRUSTED!)
   }
+  if (process.env.DEVELOPER_ID) {
+    if (req.user.id === process.env.DEVELOPER_ID) {
+      roles.push(process.env.DISCORD_DEVELOPER!)
+    }
+  }
 
   const guildJson = await guildRes.json()
   if (

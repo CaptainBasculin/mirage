@@ -161,6 +161,16 @@ export class User extends BaseEntity {
   @Column('varchar', { array: true, default: '{}' })
   randomDomains: string[]
 
+  @Column({
+    default: 0
+  })
+  imageCount: number
+
+  @Column({
+    default: 0
+  })
+  urlCount: number
+
   serialize() {
     return {
       id: this.id,
@@ -191,7 +201,9 @@ export class User extends BaseEntity {
       beta: this.beta,
       trusted: this.trusted,
       contributor: this.contributor,
-      randomDomains: this.randomDomains
+      randomDomains: this.randomDomains,
+      imageCount: this.imageCount,
+      urlCount: this.urlCount
     }
   }
 }
