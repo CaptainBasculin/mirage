@@ -3,6 +3,7 @@ import { Image } from './Image'
 import { Invite } from './Invite'
 import { ShortenedUrl } from './ShortenedUrl'
 import { Domain } from './Domain'
+import { Paste } from './Paste'
 
 @Entity()
 export class User extends BaseEntity {
@@ -96,6 +97,12 @@ export class User extends BaseEntity {
     url => url.creator
   )
   urls: ShortenedUrl[]
+
+  @OneToMany(
+    type => Paste,
+    image => image.uploader
+  )
+  pastes: Paste[]
 
   @OneToMany(
     type => Domain,

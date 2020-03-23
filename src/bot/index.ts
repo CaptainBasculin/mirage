@@ -196,7 +196,23 @@ export async function sendImageNukeCompleted(user: User, length: number) {
   await discordUser!.user.send(embed)
   return true
 }
-
+export async function sendPasteNukeComplete(user: User, length: number) {
+  if (user.discord === null) {
+    return false
+  }
+  let discordUser = logChannel.guild.members.get(user.discord)
+  if (!discordUser) {
+    return false
+  }
+  let embed = new Discord.RichEmbed()
+    .setTitle('Paste Nuke Completed')
+    .setColor('#1098ad')
+    .setDescription('Your pastes were successfully deleted from Mirage servers')
+    .setTimestamp()
+    .addField('Pastes Deleted', length.toString())
+  await discordUser!.user.send(embed)
+  return true
+}
 export async function sendURLNukeCompleted(user: User, length: number) {
   if (user.discord === null) {
     return false

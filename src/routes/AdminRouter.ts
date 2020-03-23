@@ -10,6 +10,7 @@ import sgMail from '@sendgrid/mail'
 import { Banner } from '../database/entities/Banner'
 import { randomUserId } from '../utils/RandomUtil'
 import { Domain } from '../database/entities/Domain'
+import { Paste } from '../database/entities/Paste'
 
 const AdminRouter = express.Router()
 AdminRouter.use(
@@ -66,6 +67,44 @@ AdminRouter.route('/images').get(async (req, res) => {
     layout: 'layouts/admin',
     images: images.map(image => image.serialize()).reverse()
   })
+})
+AdminRouter.route('/pastes').get(async (req, res) => {
+  let pastes = await Paste.find({
+    relations: ['uploader']
+  })
+  res.render('pages/admin/pastes', {
+    layout: 'layouts/admin',
+    pastes: pastes.reverse()
+  })
+})
+const PASTE_DELETE_CONTENT = Buffer.from('deleted').toString('base64')
+
+AdminRouter.route('/pastes/:id/delete').get(async (req, res) => {
+  let paste = await Paste.findOne({
+    where: {
+      id: req.params.id
+    },
+    relations: ['uploader']
+  })
+  if (!paste) {
+    req.flash('is-danger', 'Paste does not exist')
+    return res.redirect('/admin/pastes')
+  }
+  paste.deleted = true
+  paste.deletionReason = req.query.type || 'LEGAL'
+  paste.content = PASTE_DELETE_CONTENT
+  await paste.save()
+  req.flash(
+    'is-success',
+    `Paste ${paste.shortId} was deleted with reason ${paste.deletionReason}`
+  )
+  return res.redirect(
+    `${
+      (req.query.loc || 'admin') === 'admin'
+        ? '/admin/pastes'
+        : `/admin/users/${paste.uploader.username}`
+    }`
+  )
 })
 AdminRouter.route('/images/:id/delete').get(async (req, res) => {
   let image = await Image.findOne({

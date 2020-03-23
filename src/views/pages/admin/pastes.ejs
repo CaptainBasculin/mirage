@@ -1,0 +1,52 @@
+<h1 class="title">Pastes</h1>
+<h2 class="subtitle">
+  View all of the pastes on the instance
+</h2>
+
+<table class="table is-hoverable is-fullwidth is-striped">
+  <thead>
+    <tr>
+      <th>Path</th>
+      <th>Encrypted</th>
+      <th>Upload Date</th>
+      <th>Size</th>
+      <th>Hash</th>
+      <th>Delete</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% pastes.map(paste => { %>
+    <tr>
+      <td>
+        <a href="/paste/<%= paste.shortId %>" target="_blank">
+          <%= paste.shortId %>
+        </a>
+      </td>
+      <td><%= paste.encrypted %></td>
+      <td><%= paste.creationDate %></td>
+      <td><%= paste.size %></td>
+      <td><code><%= paste.hash %></code></td>
+      <td>
+        <div class="field is-grouped">
+          <p class="control">
+            <a
+              class="button is-warning"
+              href="/admin/pastes/<%= paste.id %>/delete?type=LEGAL"
+            >
+              Legal
+            </a>
+          </p>
+          <p class="control">
+            <a
+              class="button is-danger"
+              href="/admin/pastes/<%= paste.id %>/delete?type=COPYRIGHT"
+            >
+              Copyright
+            </a>
+          </p>
+        </div>
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>

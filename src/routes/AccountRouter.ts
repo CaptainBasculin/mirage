@@ -7,12 +7,17 @@ import bodyParser from 'body-parser'
 import { Image } from '../database/entities/Image'
 import { ShortenedUrl } from '../database/entities/ShortenedUrl'
 import { bucket } from '../utils/StorageUtil'
-import { sendImageNukeCompleted, sendURLNukeCompleted } from '../bot'
+import {
+  sendImageNukeCompleted,
+  sendURLNukeCompleted,
+  sendPasteNukeComplete
+} from '../bot'
 import { rword } from 'rword'
 import speakeasy from 'speakeasy'
 import qrcode from 'qrcode'
 import { Domain } from '../database/entities/Domain'
 import crypto from 'crypto'
+import { Paste } from '../database/entities/Paste'
 
 const AccountRouter = express.Router()
 AccountRouter.use(
@@ -234,6 +239,69 @@ AccountRouter.route('/invites/create').post(async (req, res) => {
   return res.redirect('/account/invites')
 })
 
+AccountRouter.route('/pastes').get(async (req, res) => {
+  //res.locals.profile.pastes = (res.locals.profile.pastes || []).reverse()
+  let pastes = await Paste.find({
+    where: {
+      uploader: req.user.id
+    }
+  })
+  pastes = pastes.reverse().filter(paste => !paste.deleted)
+  res.render('pages/account/pastes/index', {
+    layout: 'layouts/account',
+    pastes
+  })
+})
+const PASTE_DELETE_CONTENT = Buffer.from('deleted').toString('base64')
+AccountRouter.route('/pastes/nuke')
+  .get((req, res) => {
+    res.render('pages/account/pastes/nuke', {
+      layout: 'layouts/account',
+      stage: parseInt(req.query.stage || '0')
+    })
+  })
+  .post(async (req, res) => {
+    let stage = parseInt(req.body.stage)
+    console.log(stage)
+    if (stage === 0) {
+      return res.redirect('/account/pastes/nuke?stage=1')
+    }
+    let pastes = await Paste.find({
+      where: {
+        uploader: req.user.id,
+        deleted: false
+      }
+    })
+    Promise.all(
+      pastes.map(async paste => {
+        paste.deleted = true
+        paste.deletionReason = 'USER'
+        paste.content = PASTE_DELETE_CONTENT
+        await paste.save()
+      })
+    ).then(async () => {
+      await sendPasteNukeComplete(req.user, pastes.length)
+    })
+    return res.redirect('/account/pastes/nuke?stage=2')
+  })
+AccountRouter.route('/pastes/:id/delete').get(async (req, res) => {
+  let paste = await Paste.findOne({
+    where: {
+      id: req.params.id,
+      uploader: req.user.id
+    }
+  })
+  if (!paste) {
+    req.flash('is-danger', 'No access')
+    return res.redirect('/account/pastes')
+  }
+  paste.deleted = true
+  paste.deletionReason = 'USER'
+  paste.content = PASTE_DELETE_CONTENT
+  await paste.save()
+  req.flash('is-success', `Paste ${paste.shortId} was deleted`)
+  return res.redirect(`/account/pastes`)
+})
 AccountRouter.route('/images').get((req, res) => {
   res.locals.profile.images = res.locals.profile.images.reverse()
   res.render('pages/account/images/index', {

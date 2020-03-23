@@ -1,0 +1,56 @@
+<pre>
+  <code id="code"></code>
+</pre>
+<div class="overlay">
+  <span class="ptitle">paste.mirage</span>
+  <span>
+    [ uploaded by
+    <a href="/user/<%= paste.uploader.username %>" target="_blank">
+      <%= paste.uploader.username %>
+    </a>
+    ]
+  </span>
+  <a href="/paste/raw/<%= paste.shortId %>">[ view raw ]</a>
+  <a href="/">[ go home ]</a>
+</div>
+<link
+  rel="stylesheet"
+  href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/arta.min.css"
+/>
+<style>
+  pre {
+    display: flex;
+    flex: 0 0 100%;
+    width: 100%;
+    background: none;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+  code {
+    height: 100%;
+    width: 100%;
+  }
+  .overlay {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: 0;
+    background: rgba(10, 10, 10, 0.5);
+    padding: 10px;
+  }
+  .overlay {
+    font-family: monospace;
+  }
+  .ptitle {
+    color: #ffffff;
+    font-size: 20px;
+  }
+</style>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
+<script>
+  let content = atob(`<%= content %>`)
+  document.getElementById('code').innerText = content
+  hljs.initHighlightingOnLoad()
+</script>

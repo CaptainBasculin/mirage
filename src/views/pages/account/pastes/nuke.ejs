@@ -1,0 +1,41 @@
+<h1 class="title">Paste Nuke</h1>
+<h2 class="subtitle">
+  Nuke all of the pastes you have created
+</h2>
+<% if (stage === 1) { %>
+<article class="message is-danger">
+  <div class="message-header">
+    <p>Warning</p>
+  </div>
+  <div class="message-body">
+    This is a <strong>permanent</strong> action! Only proceed if you are certain
+    you would like to continue with deleting <strong>all</strong> of your
+    pastes.
+  </div>
+</article>
+<% } else if (stage === 2 ) { %>
+<article class="message is-success">
+  <div class="message-header">
+    <p>Success</p>
+  </div>
+  <div class="message-body">
+    Successfully removed all of your pastes.
+  </div>
+</article>
+<% } %>
+<div class="content">
+  <p>
+    If you have a Discord linked, you will receive a DM when the process is
+    fully complete
+  </p>
+</div>
+<form method="POST">
+  <input type="hidden" name="stage" value="<%= stage %>" />
+  <% if (stage === 0) { %>
+  <button class="button is-warning" type="submit">Continue</button>
+  <% } else if (stage === 1) { %>
+  <button class="button is-danger" type="submit">
+    Nuke all pastes (irreversible)
+  </button>
+  <% } %>
+</form>

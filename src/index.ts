@@ -34,6 +34,7 @@ import UserRouter from './routes/UserRouter'
 import DomainsRouter from './routes/DomainsRouter'
 import onFinished from 'on-finished'
 import fetch from 'node-fetch'
+import PasteRouter from './routes/PasteRouter'
 dotenv.config()
 
 // This allows TypeScript to detect our global value
@@ -155,6 +156,9 @@ app.use(async (req, res, next) => {
     }
     if (req.url.includes('/account/urls')) {
       relations.push('urls')
+    }
+    if (req.url.includes('/account/pastes')) {
+      relations.push('pastes')
     }
     let user = await User.findOne({
       where: {
@@ -290,6 +294,13 @@ app.use('/analytics', AnalyticsRouter)
 app.use('/oauth', OAuthRouter)
 app.use(['/u', '/user'], UserRouter)
 app.use('/domains', DomainsRouter)
+app.use('/paste', PasteRouter)
+app.use(
+  '/lib/monaco_editor',
+  express.static(
+    path.join(__dirname, '..', 'node_modules', 'monaco-editor', 'min')
+  )
+)
 async function getIndexLocals(): Promise<{
   users: number
   images: number
