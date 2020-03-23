@@ -93,8 +93,9 @@ AuthRouter.route('/login')
     req.session!.ip = req.ip
     userLogin(user, req.ip, req.headers['user-agent'] || '')
     if (req.session!.next) {
+      let next = req.session!.next
       req.session!.next = undefined
-      return res.redirect(req.session!.next)
+      return res.redirect(next)
     }
     res.redirect('/')
   })
@@ -363,8 +364,9 @@ AuthRouter.route('/jail/totp').post(async (req, res) => {
   req.session!.ip = req.ip
   req.flash('is-success', 'Logged in successfully')
   if (req.session!.next) {
+    let next = req.session!.next
     req.session!.next = undefined
-    return res.redirect(req.session!.next)
+    return res.redirect(next)
   }
   return res.redirect('/account')
 })
