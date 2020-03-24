@@ -104,14 +104,14 @@ ApiRouter.route('/upload/paste').post(pasteLimiter, async (req, res) => {
   const sha1 = crypto.createHash('sha1')
   const paste = new Paste()
   const content = Buffer.from(req.body.content)
-  paste.uploader = req.user
+  paste.uploader = user
   paste.content = content.toString('base64')
   paste.creationDate = new Date()
   paste.deleted = false
   paste.encrypted = false
   paste.hash = sha1.update(content).digest('hex')
   paste.id = randomUserId()
-  paste.shortId = randomImageId(req.user.longNames)
+  paste.shortId = randomImageId(user.longNames)
   paste.size = content.byteLength
   await paste.save()
   return res.json({
