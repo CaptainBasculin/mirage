@@ -4,6 +4,7 @@ import crypto from 'crypto'
 
 import { Paste } from '../database/entities/Paste'
 import { randomUserId, randomImageId } from '../utils/RandomUtil'
+import { pasteLimiter } from '../utils/RatelimitUtil'
 
 const PasteRouter = express.Router()
 PasteRouter.use(bodyParser.json())
