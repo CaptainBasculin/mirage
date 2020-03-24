@@ -363,7 +363,9 @@ ApiRouter.route(['/image/:file', '/image/*/:file']).get(async (req, res) => {
   let buf = await rb(file.createReadStream())
   return res.contentType(mimeType).send(buf)
 })
-
+ApiRouter.route('/paste/:id').get((req, res) => {
+  return res.redirect(`https://mirage.photos/paste/${req.params.id}`)
+})
 ApiRouter.route('/domains').get(limiter, async (req, res) => {
   const domains = (
     await Domain.find({
