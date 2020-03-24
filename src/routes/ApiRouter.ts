@@ -16,7 +16,8 @@ import { ShortenedUrl } from '../database/entities/ShortenedUrl'
 import { increaseImage, increaseUrl, sendImage } from '../utils/SocketUtil'
 import * as _ from 'lodash'
 import { Domain } from '../database/entities/Domain'
-import { limiter } from '../utils/RatelimitUtil'
+import { limiter, pasteLimiter } from '../utils/RatelimitUtil'
+import { Paste } from '../database/entities/Paste'
 const ApiRouter = express.Router()
 
 ApiRouter.use(bodyParser.json())
@@ -84,6 +85,40 @@ async function uploadImage(
   sendImage(image)
   return image
 }
+
+ApiRouter.route('/upload/paste').post(pasteLimiter, async (req, res) => {
+  let key = req.body.key
+  let user = await User.findOne({
+    where: {
+      uploadKey: key
+    }
+  })
+  if (!user) {
+    return res.status(401).send('Upload key is invalid')
+  }
+  if (user.suspended) {
+    return res
+      .status(401)
+      .send('User is suspended, check email for more information')
+  }
+  const sha1 = crypto.createHash('sha1')
+  const paste = new Paste()
+  const content = Buffer.from(req.body.content)
+  paste.uploader = req.user
+  paste.content = content.toString('base64')
+  paste.creationDate = new Date()
+  paste.deleted = false
+  paste.encrypted = false
+  paste.hash = sha1.update(content).digest('hex')
+  paste.id = randomUserId()
+  paste.shortId = randomImageId(req.user.longNames)
+  paste.size = content.byteLength
+  await paste.save()
+  return res.json({
+    success: true,
+    url: `https://mirage.photos/paste/${paste.shortId}`
+  })
+})
 
 ApiRouter.route('/upload').post(upload.single('file'), async (req, res) => {
   let key = req.body.key

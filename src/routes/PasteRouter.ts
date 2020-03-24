@@ -13,7 +13,7 @@ PasteRouter.route('/').get(async (req, res) => {
     layout: 'layouts/paste'
   })
 })
-PasteRouter.route('/upload').post(async (req, res) => {
+PasteRouter.route('/upload').post(pasteLimiter, async (req, res) => {
   if (!req.loggedIn) {
     return res.json({
       success: false,

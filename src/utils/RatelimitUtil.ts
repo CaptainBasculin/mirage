@@ -24,4 +24,11 @@ const authLimiter = RateLimit({
   message: 'Too many /auth requests. Try again later.'
 })
 
-export { limiter, authLimiter }
+const pasteLimiter = RateLimit({
+  store,
+  max: 5,
+  windowMs: ms('1m'),
+  message: 'Too many pastes. Try again later.'
+})
+
+export { limiter, authLimiter, pasteLimiter }
