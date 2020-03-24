@@ -268,6 +268,9 @@ ApiRouter.route('/shorten').post(async (req, res) => {
 ApiRouter.route('/image').get((req, res) => {
   return res.redirect(process.env.BASE_URL!)
 })
+ApiRouter.route('/image/paste/:id').get((req, res) => {
+  return res.redirect(`https://mirage.photos/paste/${req.params.id}`)
+})
 ApiRouter.route(['/image/:file', '/image/*/:file']).get(async (req, res) => {
   if (req.params.file && !req.params.file.includes('.')) {
     // Shortened url
@@ -362,9 +365,6 @@ ApiRouter.route(['/image/:file', '/image/*/:file']).get(async (req, res) => {
 
   let buf = await rb(file.createReadStream())
   return res.contentType(mimeType).send(buf)
-})
-ApiRouter.route('/image/paste/:id').get((req, res) => {
-  return res.redirect(`https://mirage.photos/paste/${req.params.id}`)
 })
 ApiRouter.route('/domains').get(limiter, async (req, res) => {
   const domains = (
