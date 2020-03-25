@@ -18,7 +18,7 @@ import qrcode from 'qrcode'
 import { Domain } from '../database/entities/Domain'
 import crypto from 'crypto'
 import { Paste } from '../database/entities/Paste'
-
+import { getUserByUsername, linkUser } from '../utils/XfUtil'
 const AccountRouter = express.Router()
 AccountRouter.use(
   bodyParser.urlencoded({
@@ -419,6 +419,32 @@ AccountRouter.route('/upload').get((req, res) => {
     layout: 'layouts/account'
   })
 })
+
+/* forums */
+AccountRouter.route('/forums')
+  .get((req, res) => {
+    return res.render('pages/account/forums', {
+      layout: 'layouts/account'
+    })
+  })
+  .post(async (req, res) => {
+    const xfUser = await getUserByUsername(req.body.username)
+    if (!xfUser) {
+      req.flash('is-danger', 'That user does not exist on the forums.')
+      return res.redirect('/account/forums')
+    }
+
+    const success = await linkUser(req.user, req.body.username)
+    if (!success) {
+      req.flash(
+        'is-danger',
+        'Failed to link your account on the forums. Please contact a developer.'
+      )
+    } else {
+      req.flash('is-success', 'Linked your account on the forums successfully.')
+    }
+    return res.redirect('/account/forums')
+  })
 
 /* 2fa */
 AccountRouter.route('/mfa').get(async (req, res) => {

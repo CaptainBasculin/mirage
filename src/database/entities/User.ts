@@ -178,6 +178,16 @@ export class User extends BaseEntity {
   })
   urlCount: number
 
+  @Column({
+    default: 0
+  })
+  pasteCount: number
+
+  @Column({
+    nullable: true
+  })
+  xenforoUsername: string
+
   serialize() {
     return {
       id: this.id,
@@ -210,7 +220,9 @@ export class User extends BaseEntity {
       contributor: this.contributor,
       randomDomains: this.randomDomains,
       imageCount: this.imageCount,
-      urlCount: this.urlCount
+      urlCount: this.urlCount,
+      pasteCount: this.pasteCount,
+      xenforoUsername: this.xenforoUsername
     }
   }
 }

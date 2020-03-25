@@ -1,0 +1,29 @@
+<h1 class="title">Forums</h1>
+<h2 class="subtitle">Link your forums account to your Mirage account</h2>
+
+<% if (profile.xenforoUsername !== null) { %>
+<article class="message is-warning">
+  <div class="message-header">
+    <p>Warning</p>
+  </div>
+  <div class="message-body">
+    You already have a forum account linked to your account, continuing will
+    unlink it and remove all groups from your old account.
+  </div>
+</article>
+<% } %>
+
+<form class="form" method="POST">
+  <div class="control">
+    <label class="label" for="username">Username</label>
+    <input
+      class="input"
+      value="<%= profile.xenforoUsername || '' %>"
+      name="username"
+      id="username"
+    />
+  </div>
+  <div class="control">
+    <button class="button is-primary" type="submit">Link</button>
+  </div>
+</form>
