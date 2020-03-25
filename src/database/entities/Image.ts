@@ -63,6 +63,11 @@ export class Image extends BaseEntity {
   )
   reports: Report[]
 
+  @Column({
+    nullable: true
+  })
+  uploaderIp: string
+
   userSerialize() {
     return {
       id: this.id,
@@ -76,7 +81,8 @@ export class Image extends BaseEntity {
       path: this.path,
       originalName: this.originalName,
       deleted: this.deleted,
-      deletionReason: this.deletionReason
+      deletionReason: this.deletionReason,
+      uploaderIp: this.uploaderIp
     }
   }
   serialize() {
@@ -93,6 +99,7 @@ export class Image extends BaseEntity {
       originalName: this.originalName,
       deleted: this.deleted,
       deletionReason: this.deletionReason,
+      uploaderIp: this.uploaderIp,
       uploader: {
         id: this.uploader.id,
         username: this.uploader.username,

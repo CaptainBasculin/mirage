@@ -35,7 +35,8 @@ async function uploadImage(
   host: string,
   user: User,
   file: Express.Multer.File,
-  useOriginalName: boolean
+  useOriginalName: boolean,
+  ip: string
 ): Promise<Image> {
   if (!user.admin) {
     useOriginalName = false
@@ -79,6 +80,7 @@ async function uploadImage(
   image.uploader = user
   image.contentType = file.mimetype
   image.originalName = file.originalname
+  image.uploaderIp = ip
   await image.save()
   await bucket.file(image.path).save(file.buffer)
   increaseImage()
@@ -139,7 +141,8 @@ ApiRouter.route('/upload').post(upload.single('file'), async (req, res) => {
     req.body.host || req.hostname || 'mirage.re',
     user,
     req.file,
-    req.body.useOriginalName === '1'
+    req.body.useOriginalName === '1',
+    req.ip
   )
   return res.send(image.url)
 })
@@ -156,11 +159,18 @@ ApiRouter.route('/upload/site').post(
         .status(401)
         .send('User is suspended, check email for more information')
     }
+    let host = req.body.host || req.hostname || 'mirage.re'
+    let randomDomains = user.randomDomains
+    if (randomDomains.length === 0) {
+      randomDomains.push('mirage.re')
+    }
+    host = _.sample(randomDomains)!
     let image = await uploadImage(
-      'mirage.wtf',
+      host,
       user,
       req.file,
-      req.body.useOriginalName === '1'
+      req.body.useOriginalName === '1',
+      req.ip
     )
     return res.send(image.url)
   }
@@ -187,7 +197,8 @@ ApiRouter.route('/upload/shortcuts/:host/:key').post(
       req.params.host || req.hostname || 'mirage.re',
       user,
       req.file,
-      req.body.useOriginalName === '1'
+      req.body.useOriginalName === '1',
+      req.ip
     )
     return res.send(image.url)
   }
@@ -213,7 +224,8 @@ ApiRouter.route('/upload/pomf/:key').post(
       req.body.host || req.hostname || 'mirage.re',
       user,
       req.file,
-      req.body.useOriginalName === '1'
+      req.body.useOriginalName === '1',
+      req.ip
     )
     return res.json({
       success: true,
