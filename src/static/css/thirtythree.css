@@ -105,12 +105,33 @@ body {
   margin-right: 24px;
 }
 
+.ct {
+  width: 100%;
+}
 .cards {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   margin-right: 10%;
   margin-top: 240px;
+}
+@media screen and (max-width: 500px) {
+  .cards {
+    flex-direction: column !important;
+    align-items: center;
+  }
+  .card {
+    margin-bottom: 10px;
+  }
+  .card-2 {
+    margin-top: 0 !important;
+  }
+  .card-3 {
+    margin-top: 0 !important;
+  }
+  .bottom {
+    margin-top: 925px !important;
+  }
 }
 
 .card {
@@ -179,6 +200,7 @@ iframe {
 }
 
 .footer {
+  display: none;
   margin-top: 200px;
   width: 91.8vw;
   background: #cecbf3;
@@ -197,4 +219,8 @@ iframe {
 }
 a {
   text-decoration: none;
+}
+
+.ct {
+  display: block;
 }
