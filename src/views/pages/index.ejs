@@ -1,21 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <%- meta %> <% include ../includes/styles %>
-    <title>Mirage</title>
-  </head>
-  <body>
-    <div class="content-main">
-      <% include ../includes/navbar %>
-      <div class="main-ctr">
-        <%- body %>
+<div class="top">
+  <div class="stripe"></div>
+  <div class="content">
+    <div class="navbar">
+      <span class="brand">
+        mirage
+      </span>
+      <div class="right">
+        <a class="item active" href="/">Home</a>
+        <a class="item" href="/domains">Domains</a>
+        <% if (loggedIn) { %>
+        <a class="item" href="/account/upload">Upload</a>
+        <a class="item" href="/paste">Paste</a>
+        <a class="item" href="/account"> Account</a>
+        <a class="item" href="/auth/logout">
+          Logout
+        </a>
+        <% } else { %>
+        <a class="item" href="/auth/register">
+          Sign Up
+        </a>
+        <a class="item" href="/auth/login">
+          Log In
+        </a>
+        <% } %>
       </div>
-      <div class="grow"></div>
-      <% include ../includes/footer %>
     </div>
-    <% include ../includes/scripts %>
-  </body>
-</html>
+    <div class="hero">
+      <span class="title">The best private image hosting</span>
+      <span class="subtitle">You'll never want to use anything else</span>
+    </div>
+    <div class="cta">
+      <a class="button" href="https://community.mirage.photos" target="_blank">
+        Join the Forums
+      </a>
+      <a class="button" href="/auth/register">
+        Sign Up
+      </a>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <p class="card-subtitle">USERS</p>
+        <p class="card-title" id="live-users"><%= users %></p>
+      </div>
+      <div class="card card-2">
+        <p class="card-subtitle">IMAGES</p>
+        <p class="card-title" id="live-images"><%= images %></p>
+      </div>
+      <div class="card card-3">
+        <p class="card-subtitle">URLS</p>
+        <p class="card-title" id="live-urls"><%= urls %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bottom">
+  <section class="section">
+    <span class="sect-title">Discord</span>
+    <iframe
+      src="https://discordapp.com/widget?id=619628882018041867&theme=dark"
+      width="350"
+      height="500"
+      allowtransparency="true"
+      frameborder="0"
+    ></iframe>
+  </section>
+</div>
+<footer class="footer">
+  <div class="footer-col">
+    <p><strong>Mirage</strong> by relative.</p>
+    <p>Copyright &copy; 2020</p>
+  </div>
+
+  <div class="footer-col">
+    <a href="/discord" target="_blank">Discord</a>
+    <a href="/contact">Contact</a>
+  </div>
+
+  <div class="footer-col">
+    <a href="/legal/terms">Terms of Service</a>
+    <a href="/legal/privacy">Privacy Policy</a>
+    <a href="/legal/guidelines">Account Holder Guidelines</a>
+
+    <a href="/legal/report" class="has-text-danger">Report Abuse</a>
+  </div>
+</footer>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  let socket = io()
+  socket.on('image', images => {
+    console.log(images)
+    document.getElementById('live-images').innerText = images
+  })
+  socket.on('url', urls => {
+    document.getElementById('live-urls').innerText = urls
+  })
+  socket.on('user', users => {
+    document.getElementById('live-users').innerText = users
+  })
+</script>
+
+<!-- dont paste my site dimwits -->
