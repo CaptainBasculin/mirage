@@ -1,0 +1,97 @@
+<section class="hero is-medium is-primary is-bold">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">
+        Mirage
+      </h1>
+      <h2 class="subtitle">
+        A private image and file host
+      </h2>
+      <a
+        href="https://community.mirage.photos"
+        class="button is-link is-inverted"
+      >
+        Join the Forums
+      </a>
+    </div>
+  </div>
+</section>
+<nav class="level" style="margin-top: 1rem">
+  <div class="level-item has-text-centered">
+    <div>
+      <p class="heading">Users</p>
+      <p class="title" id="live-users"><%= users %></p>
+    </div>
+  </div>
+  <div class="level-item has-text-centered">
+    <div>
+      <p class="heading">Images</p>
+      <p class="title" id="live-images"><%= images %></p>
+    </div>
+  </div>
+  <div class="level-item has-text-centered">
+    <div>
+      <p class="heading">Shortened URLs</p>
+      <p class="title" id="live-urls"><%= urls %></p>
+    </div>
+  </div>
+</nav>
+<section class="section">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <h1 class="title">Domains</h1>
+        <p class="content">
+          Join today, and you will receive access to enticing domains such as
+          <a href="https://discock.gg">discock.gg</a>,
+          <a href="https://a-virg.in">a-virg.in</a>,
+          <a href="https://exploits.systems">exploits.systems</a>, and many
+          more!
+        </p>
+      </div>
+      <div class="column">
+        <h1 class="title">Private Host</h1>
+        <p class="content">
+          Being private provides many benefits. Some benefits include faster
+          support, better domains, and better funding.
+        </p>
+      </div>
+      <div class="column">
+        <h1 class="title">Discord</h1>
+        <iframe
+          src="https://discordapp.com/widget?id=619628882018041867&theme=dark"
+          width="350"
+          height="500"
+          allowtransparency="true"
+          frameborder="0"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  iframe {
+    height: 500px;
+  }
+</style>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  let socket = io()
+  socket.on('image', images => {
+    console.log(images)
+    document.getElementById('live-images').innerText = images
+  })
+  socket.on('url', urls => {
+    document.getElementById('live-urls').innerText = urls
+  })
+  socket.on('user', users => {
+    document.getElementById('live-users').innerText = users
+  })
+</script>
+<style>
+  .box {
+    box-shadow: 0 0.5em 1em -0.125em rgba(0, 0, 0, 0.5),
+      0 0px 0 1px rgba(0, 0, 0, 0.5);
+    margin: 10px;
+  }
+</style>

@@ -331,7 +331,14 @@ async function getIndexLocals(): Promise<{
 
 app.get('/', async (req, res) => {
   let locals = await getIndexLocals()
-  res.render('pages/index', locals)
+  res.render('pages/index', {
+    ...locals,
+    layout: 'layouts/blank'
+  })
+})
+app.get('/oldindex', async (req, res) => {
+  let locals = await getIndexLocals()
+  res.render('pages/index-old', locals)
 })
 
 app.get('/discord', (req, res) => {

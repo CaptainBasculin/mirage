@@ -1,79 +1,90 @@
-<section class="hero is-medium is-primary is-bold">
-  <div class="hero-body">
-    <div class="container">
-      <h1 class="title">
-        Mirage
-      </h1>
-      <h2 class="subtitle">
-        A private image and file host
-      </h2>
-      <a
-        href="https://community.mirage.photos"
-        class="button is-link is-inverted"
-      >
+<div class="top">
+  <div class="stripe"></div>
+  <div class="content">
+    <div class="navbar">
+      <span class="brand">
+        mirage
+      </span>
+      <div class="right">
+        <a class="item active" href="/">Home</a>
+        <a class="item" href="/domains">Domains</a>
+        <% if (loggedIn) { %>
+        <a class="item" href="/account/upload">Upload</a>
+        <a class="item" href="/paste">Paste</a>
+        <a class="item" href="/account"> Account</a>
+        <a class="item" href="/auth/logout">
+          Logout
+        </a>
+        <% } else { %>
+        <a class="item" href="/auth/register">
+          Sign Up
+        </a>
+        <a class="item" href="/auth/login">
+          Log In
+        </a>
+        <% } %>
+      </div>
+    </div>
+    <div class="hero">
+      <span class="title">The best private image hosting</span>
+      <span class="subtitle">You'll never want to use anything else</span>
+    </div>
+    <div class="cta">
+      <a class="button" href="https://community.mirage.photos" target="_blank">
         Join the Forums
       </a>
+      <a class="button" href="/auth/register">
+        Sign Up
+      </a>
     </div>
-  </div>
-</section>
-<nav class="level" style="margin-top: 1rem">
-  <div class="level-item has-text-centered">
-    <div>
-      <p class="heading">Users</p>
-      <p class="title" id="live-users"><%= users %></p>
-    </div>
-  </div>
-  <div class="level-item has-text-centered">
-    <div>
-      <p class="heading">Images</p>
-      <p class="title" id="live-images"><%= images %></p>
-    </div>
-  </div>
-  <div class="level-item has-text-centered">
-    <div>
-      <p class="heading">Shortened URLs</p>
-      <p class="title" id="live-urls"><%= urls %></p>
-    </div>
-  </div>
-</nav>
-<section class="section">
-  <div class="container">
-    <div class="columns">
-      <div class="column">
-        <h1 class="title">Domains</h1>
-        <p class="content">
-          Join today, and you will receive access to enticing domains such as
-          <a href="https://discock.gg">discock.gg</a>,
-          <a href="https://a-virg.in">a-virg.in</a>,
-          <a href="https://exploits.systems">exploits.systems</a>, and many
-          more!
-        </p>
+    <div class="cards">
+      <div class="card">
+        <p class="card-subtitle">USERS</p>
+        <p class="card-title" id="live-users"><%= users %></p>
       </div>
-      <div class="column">
-        <h1 class="title">Private Host</h1>
-        <p class="content">
-          Being private provides many benefits. Some benefits include faster
-          support, better domains, and better funding.
-        </p>
+      <div class="card card-2">
+        <p class="card-subtitle">IMAGES</p>
+        <p class="card-title" id="live-images"><%= images %></p>
       </div>
-      <div class="column">
-        <h1 class="title">Discord</h1>
-        <iframe
-          src="https://discordapp.com/widget?id=619628882018041867&theme=dark"
-          width="350"
-          height="500"
-          allowtransparency="true"
-          frameborder="0"
-        ></iframe>
+      <div class="card card-3">
+        <p class="card-subtitle">URLS</p>
+        <p class="card-title" id="live-urls"><%= urls %></p>
       </div>
     </div>
   </div>
-</section>
-<style>
-  iframe {
-    height: 500px;
-  }
-</style>
+</div>
+
+<div class="bottom">
+  <section class="section">
+    <span class="sect-title">Discord</span>
+    <iframe
+      src="https://discordapp.com/widget?id=619628882018041867&theme=dark"
+      width="350"
+      height="500"
+      allowtransparency="true"
+      frameborder="0"
+    ></iframe>
+  </section>
+</div>
+<footer class="footer">
+  <div class="footer-col">
+    <p><strong>Mirage</strong> by relative.</p>
+    <p>Copyright &copy; 2020</p>
+  </div>
+
+  <div class="footer-col">
+    <a href="/discord" target="_blank">Discord</a>
+    <a href="/contact">Contact</a>
+  </div>
+
+  <div class="footer-col">
+    <a href="/legal/terms">Terms of Service</a>
+    <a href="/legal/privacy">Privacy Policy</a>
+    <a href="/legal/guidelines">Account Holder Guidelines</a>
+
+    <a href="/legal/report" class="has-text-danger">Report Abuse</a>
+  </div>
+</footer>
 <script src="/socket.io/socket.io.js"></script>
 <script>
   let socket = io()
@@ -88,10 +99,5 @@
     document.getElementById('live-users').innerText = users
   })
 </script>
-<style>
-  .box {
-    box-shadow: 0 0.5em 1em -0.125em rgba(0, 0, 0, 0.5),
-      0 0px 0 1px rgba(0, 0, 0, 0.5);
-    margin: 10px;
-  }
-</style>
+
+<!-- dont paste my site dimwits -->
