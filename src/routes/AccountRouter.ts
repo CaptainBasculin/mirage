@@ -26,6 +26,7 @@ AccountRouter.use(
   })
 )
 const BaseUploader = {
+  Version: '13.1.0',
   Name: 'Mirage ($user$ on host $host$)',
   DestinationType: 'ImageUploader, FileUploader',
   RequestURL: 'https://api.mirage.re/upload',
@@ -36,7 +37,7 @@ const BaseUploader = {
   }
 }
 const BaseUrlShortener = {
-  Version: '13.0.1',
+  Version: '13.1.0',
   Name: 'Mirage URL Shortener ($user$ on host $host$)',
   DestinationType: 'URLShortener',
   RequestMethod: 'POST',
@@ -47,6 +48,20 @@ const BaseUrlShortener = {
     url: '$input$',
     host: ''
   }
+}
+const BasePasteUploader = {
+  Version: '13.1.0',
+  Name: 'Mirage Paste ($user$ on host $host$)',
+  DestinationType: 'TextUploader',
+  RequestMethod: 'POST',
+  RequestURL: 'https://api.mirage.re/upload/paste',
+  Body: 'MultipartFormData',
+  Arguments: {
+    key: '',
+    host: ''
+  },
+  FileFormName: 'file',
+  URL: '$json:url$'
 }
 function authMiddleware(req: Request, res: Response, next: NextFunction) {
   if (!req.user) {
@@ -197,6 +212,48 @@ AccountRouter.route('/sharex')
     res.setHeader(
       'Content-Disposition',
       `attachment; filename=mirage_sharex_${req.user.username}_on_${req.body.host}.sxcu`
+    )
+    res.setHeader('Content-Transfer-Encoding', 'binary')
+    res.setHeader('Content-Type', 'application/octet-stream')
+    return res.send(JSON.stringify(cfg))
+  })
+AccountRouter.route('/sharexpaste')
+  .get(async (req, res) => {
+    let _domains = await Domain.find({
+      relations: ['donor']
+    })
+
+    const sortFn = (a: Domain, b: Domain) => {
+      if (a.domain < b.domain) {
+        return -1
+      }
+      if (a.domain > b.domain) {
+        return 1
+      }
+      return 0
+    }
+
+    let official = _domains.filter(domain => !domain.donor).sort(sortFn)
+    let donor = _domains.filter(domains => domains.donor).sort(sortFn)
+
+    let domains = official.concat(donor)
+    res.render('pages/account/sharexpaste', {
+      layout: 'layouts/account',
+      domains
+    })
+  })
+  .post((req, res) => {
+    let cfg = {
+      ...BasePasteUploader,
+      Name: `Mirage Paste (${req.user.username} on ${req.body.host})`,
+      Arguments: {
+        key: req.user.uploadKey,
+        host: req.body.host
+      }
+    }
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=mirage_sharex_paste_${req.user.username}_on_${req.body.host}.sxcu`
     )
     res.setHeader('Content-Transfer-Encoding', 'binary')
     res.setHeader('Content-Type', 'application/octet-stream')

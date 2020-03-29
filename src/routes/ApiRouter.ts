@@ -88,7 +88,7 @@ async function uploadImage(
   return image
 }
 
-ApiRouter.route('/upload/paste').post(pasteLimiter, async (req, res) => {
+ApiRouter.route('/upload/paste/text').post(pasteLimiter, async (req, res) => {
   let key = req.body.key
   let user = await User.findOne({
     where: {
@@ -237,6 +237,53 @@ ApiRouter.route('/upload/pomf/:key').post(
           size: image.size
         }
       ]
+    })
+  }
+)
+
+ApiRouter.route('/upload/paste').post(
+  pasteLimiter,
+  upload.single('file'),
+  async (req, res) => {
+    let key = req.body.key
+    let user = await User.findOne({
+      where: {
+        uploadKey: key
+      }
+    })
+    if (!user) {
+      return res.status(401).send('Upload key is invalid')
+    }
+    if (user.suspended) {
+      return res
+        .status(401)
+        .send('User is suspended, check email for more information')
+    }
+
+    const sha1 = crypto.createHash('sha1')
+    const paste = new Paste()
+    const content = req.file.buffer
+    paste.uploader = user
+    paste.content = content.toString('base64')
+    paste.creationDate = new Date()
+    paste.deleted = false
+    paste.encrypted = false
+    paste.hash = sha1.update(content).digest('hex')
+    paste.id = randomUserId()
+    paste.shortId = randomImageId(user.longNames)
+    paste.size = content.byteLength
+    await paste.save()
+    let host = req.body.host || req.hostname || 'mirage.re'
+    if (host === '#random#') {
+      let randomDomains = user.randomDomains
+      if (randomDomains.length === 0) {
+        randomDomains.push('mirage.re')
+      }
+      host = _.sample(randomDomains)!
+    }
+    return res.json({
+      success: true,
+      url: `https://${host}/paste/${paste.shortId}`
     })
   }
 )
