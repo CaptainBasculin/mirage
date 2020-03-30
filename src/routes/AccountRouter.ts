@@ -25,16 +25,19 @@ AccountRouter.use(
     extended: true
   })
 )
+
 const BaseUploader = {
-  Version: '13.1.0',
-  Name: 'Mirage ($user$ on host $host$)',
+  Version: '13.0.1',
+  Name: 'Mirage ($user$ on $host$)',
   DestinationType: 'ImageUploader, FileUploader',
+  RequestMethod: 'POST',
   RequestURL: 'https://api.mirage.re/upload',
-  FileFormName: 'file',
+  Body: 'MultipartFormData',
   Arguments: {
     key: '',
     host: ''
-  }
+  },
+  FileFormName: 'file'
 }
 const BaseUrlShortener = {
   Version: '13.1.0',
