@@ -229,35 +229,6 @@ a {
   display: block;
 }
 
-@media screen and (max-width: 1023px) {
-  .navbar-menu {
-    background-color: #0a0a0a;
-    box-shadow: 0 8px 16px rgba(255, 255, 255, 0.1);
-    padding: 0.5rem 0;
-  }
-}
-
-@media screen and (min-width: 1024px) {
-  .navbar-menu {
-    align-items: stretch;
-    display: flex;
-  }
-  .navbar-burger {
-    display: none;
-  }
-}
-@media screen and (max-width: 1023px) {
-  .navbar-menu.is-active {
-    display: flex;
-    flex-direction: column;
-    top: 0;
-    left: 0;
-    position: fixed;
-    width: 100%;
-    padding: 14px;
-    margin-top: 116px;
-  }
-}
 /* navbar burger mostly taken from Bulma */
 .navbar-burger {
   color: #ffffff;
@@ -301,4 +272,37 @@ a {
   transition-property: background-color, opacity, transform;
   transition-timing-function: ease-out;
   width: 16px;
+}
+@media screen and (max-width: 1023px) {
+  .navbar-menu {
+    background-color: #0a0a0a;
+    box-shadow: 0 8px 16px rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 0;
+  }
+}
+
+@media screen and (max-width: 1023px) {
+  .navbar-menu.is-active {
+    display: flex;
+    flex-direction: column;
+    top: 0;
+    left: 0;
+    position: fixed;
+    width: 100%;
+    padding: 14px;
+    margin-top: 116px;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .navbar-menu {
+    align-items: stretch;
+    display: flex;
+  }
+  .navbar .right {
+    display: flex;
+  }
+  .navbar-burger {
+    display: none;
+  }
 }
