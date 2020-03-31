@@ -42,7 +42,7 @@ body {
   margin-right: 10%;
 }
 .navbar .right {
-  display: flex;
+  display: none;
   flex-direction: row;
 }
 .navbar .item {
@@ -115,12 +115,14 @@ body {
   margin-right: 10%;
   margin-top: 240px;
 }
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 1024px) {
   .cards {
     flex-direction: column !important;
     align-items: center;
+    margin-right: 0;
   }
   .card {
+    margin-top: 20px;
     margin-bottom: 10px;
   }
   .card-2 {
@@ -223,4 +225,77 @@ a {
 
 .ct {
   display: block;
+}
+
+@media screen and (max-width: 1023px) {
+  .navbar-menu {
+    background-color: #0a0a0a;
+    box-shadow: 0 8px 16px rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 0;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .navbar-menu {
+    align-items: stretch;
+    display: flex;
+  }
+  .navbar-burger {
+    display: none;
+  }
+}
+@media screen and (max-width: 1023px) {
+  .navbar-menu.is-active {
+    display: flex;
+    flex-direction: column;
+    top: 0;
+    left: 0;
+    position: fixed;
+    width: 100%;
+    padding: 14px;
+    margin-top: 116px;
+  }
+}
+/* navbar burger mostly taken from Bulma */
+.navbar-burger {
+  color: #ffffff;
+  cursor: pointer;
+  display: block;
+  height: 3rem;
+  position: relative;
+  width: 3.25rem;
+  margin-left: auto;
+}
+.navbar-burger span:nth-child(1) {
+  top: calc(50% - 6px);
+  height: 2px;
+}
+.navbar-burger span:nth-child(2) {
+  top: calc(50% - 1px);
+  height: 2px;
+}
+.navbar-burger span:nth-child(3) {
+  top: calc(50% + 4px);
+  height: 2px;
+}
+.navbar-burger.is-active span:nth-child(1) {
+  transform: translateY(5px) rotate(45deg);
+}
+.navbar-burger.is-active span:nth-child(2) {
+  opacity: 0;
+}
+.navbar-burger.is-active span:nth-child(3) {
+  transform: translateY(-5px) rotate(-45deg);
+}
+.navbar-burger span {
+  background-color: currentColor;
+  display: block;
+  height: 1px;
+  left: calc(50% - 8px);
+  position: absolute;
+  transform-origin: center;
+  transition-duration: 86ms;
+  transition-property: background-color, opacity, transform;
+  transition-timing-function: ease-out;
+  width: 16px;
 }
