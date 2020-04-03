@@ -1,6 +1,15 @@
 <div class="container">
   <section class="section">
     <h1 class="title"><%= user.username %></h1>
+    <% if (!notInvited) { %>
+    <p class="subtitle">
+      Invited by
+      <a href="<%= invite.creator.username %>">
+        <%= invite.creator.username %>
+      </a>
+    </p>
+    <% } %>
+    <!--<p class="subtitle">Member since <span><%= user.createdOn %></span></p>-->
     <div class="columns">
       <div class="column is-one-quarter">
         <% if (user.suspended) { %>
