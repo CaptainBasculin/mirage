@@ -48,8 +48,11 @@
             <% } %>
           </td>
           <td>
-            <% if (domain.donor) { %> <%= domain.donor.username %> <% } else {
-            %>
+            <% if (domain.donor) { %>
+            <a href="/u/<%= domain.donor.username %>">
+              <%= domain.donor.username %>
+            </a>
+            <% } else { %>
             <em>none</em>
             <% } %>
           </td>

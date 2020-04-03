@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express'
 import { User } from '../database/entities/User'
 import { Domain } from '../database/entities/Domain'
+import { Invite } from '../database/entities/Invite'
 
 const UserRouter = express.Router()
 
@@ -26,8 +27,18 @@ UserRouter.route('/:user').get(async (req, res) => {
   if (user.donatedDomains) {
     user.donatedDomains = user.donatedDomains.sort(sortFn)
   }
+
+  let invite = await Invite.findOne({
+    where: {
+      redeemedBy: user.username
+    },
+    relations: ['creator']
+  })
+  let notInvited = !invite
   return res.render('pages/user/user', {
-    user
+    user,
+    notInvited,
+    invite
   })
 })
 
